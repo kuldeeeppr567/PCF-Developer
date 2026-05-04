@@ -368,6 +368,78 @@ After scaffolding, confirm with the user:
 - ✅ Dependencies linked via workspace (shared `node_modules/`)
 - ✅ Build succeeds
 
+## Post-Creation Workflow
+
+After a successful build, follow this exact sequence:
+
+### Step 9: Show Control Information Document
+
+Display a markdown summary to the user with:
+
+```markdown
+# <controlName> — PCF Control Summary
+
+## What This Control Does
+<One-paragraph description of the control's purpose and behavior>
+
+## Control Type
+| Property | Value |
+|----------|-------|
+| Type | Field / Dataset / React Virtual |
+| Namespace | <namespace> |
+| Bound Property | <boundPropertyType> (or Dataset) |
+| Framework | Standard DOM / React + Fluent UI |
+
+## How to Configure in Power Apps
+
+### Option A: Deploy via VS Code (Recommended)
+1. Open this workspace in VS Code
+2. Select the **PCF Developer** agent in Copilot Chat
+3. Say: *"Deploy <controlName> to my environment"*
+4. Provide your environment URL and publisher prefix when asked
+
+### Option B: Manual Import
+1. **Build the solution package:**
+   ```bash
+   cd solutions
+   mkdir <controlName>Solution
+   cd <controlName>Solution
+   pac solution init --publisher-name <PublisherName> --publisher-prefix <prefix>
+   pac solution add-reference --path ../../controls/<controlName>
+   dotnet build
+   ```
+2. **Find the solution zip:** `solutions/<controlName>Solution/bin/Debug/<controlName>Solution.zip`
+3. **Import into Power Platform:**
+   - Go to [make.powerapps.com](https://make.powerapps.com)
+   - Navigate to **Solutions** → **Import solution**
+   - Upload the `.zip` file and click **Import**
+4. **Add to a form or page:**
+   - Open the form editor for your table
+   - Select the field → **Change control** → Choose `<controlName>`
+   - Save and publish the form
+```
+
+### Step 10: Ask About Preview
+
+After showing the information document, ask the user:
+
+> **Would you like to preview the control in the test harness?**
+
+- If **yes** → Run `npm start watch` inside `controls/<controlName>/` and inform the user the browser will open at `http://localhost:8181`
+- If **no** → Proceed to Step 11
+
+### Step 11: Ask About Deployment
+
+If the user declined preview (or after preview is done), ask:
+
+> **Would you like to deploy this control to a Power Platform environment?**
+
+- If **yes** → Ask for:
+  - **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
+  - **Publisher prefix** (e.g., `contoso`) — use the one from scaffolding if already provided
+  Then invoke the `deploy-pcf` skill to handle authentication and deployment.
+- If **no** → End the workflow. Inform the user they can deploy later by saying *"Deploy <controlName>"* in chat.
+
 ## Common Property Type Mappings
 
 | Use Case | Property Type |
