@@ -12,6 +12,9 @@ dist/
 # PCF generated files
 **/generated/
 
+# User-created controls (keep only controls/README.md)
+controls/*/
+
 # Solution packages
 solutions/*/bin/
 solutions/*/obj/
