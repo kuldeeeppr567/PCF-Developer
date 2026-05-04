@@ -63,9 +63,20 @@ cd <repo-root>
 npm install
 ```
 
-This links the new control into the workspace. Since dependencies are shared, this takes ~2-5 seconds (no re-download). If this is the very first control being created, it takes longer (~30-60s) as the shared packages install once.
+This does two things:
+1. Links the new control into the workspace and installs shared packages (fast if not the first control)
+2. Automatically creates a **directory junction** from `controls/<controlName>/node_modules` → root `node_modules/` via the `postinstall` script
 
-> **Important:** Do NOT run `npm install` inside the control folder. Always run it from the repo root to use the shared workspace.
+The junction is required because PCF tooling (`pcf-scripts`, `pcf-start`) expects `node_modules` to exist locally in the control folder. The junction is a zero-cost pointer — no disk duplication.
+
+> **Important:** Do NOT run `npm install` inside the control folder. Always run it from the repo root.
+> **Important:** Do NOT modify `tsconfig.json` paths — the junction makes the default `./node_modules/pcf-scripts/tsconfig_base.json` resolve correctly.
+
+**Verify the junction was created:**
+```bash
+dir controls/<controlName>/node_modules
+```
+If it shows as a `<JUNCTION>` pointing to the root `node_modules`, you're good.
 
 ### Step 4: Configure the Manifest
 
