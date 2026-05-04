@@ -72,6 +72,24 @@ pac pcf init --namespace <namespace> --name <controlName> --template dataset
 pac pcf init --namespace <namespace> --name <controlName> --template field --framework react
 ```
 
+### Step 2b: Rename Package (CRITICAL — Do This Before npm install)
+
+`pac pcf init` generates `"name": "pcf-project"` in every control's `package.json`. This causes **npm workspace name collisions** if you have more than one control. You MUST rename it to a unique name IMMEDIATELY after init, BEFORE running `npm install`:
+
+```bash
+# Inside controls/<controlName>/package.json, change:
+"name": "pcf-project"
+# To:
+"name": "pcf-<controlname-lowercase>"
+```
+
+For example, for a control named `Slider`:
+```json
+"name": "pcf-slider"
+```
+
+> **Why this is critical:** npm workspaces require unique package names. If two controls both have `"name": "pcf-project"`, `npm install` will fail or remove packages unexpectedly. ALWAYS rename before install.
+
 ### Step 3: Install Dependencies (Shared Workspace)
 
 Run from the **repository root** (not inside the control folder):
@@ -88,12 +106,13 @@ The junction is required because PCF tooling (`pcf-scripts`, `pcf-start`) expect
 
 > **Important:** Do NOT run `npm install` inside the control folder. Always run it from the repo root.
 > **Important:** Do NOT modify `tsconfig.json` paths — the junction makes the default `./node_modules/pcf-scripts/tsconfig_base.json` resolve correctly.
+> **Important:** Run `npm install` ONLY ONCE per control creation. If the build fails after install, the issue is NOT dependencies — check manifest XML syntax or TypeScript errors instead.
 
 **Verify the junction was created:**
 ```bash
-dir controls/<controlName>/node_modules
+Test-Path "controls/<controlName>/node_modules/pcf-scripts"
 ```
-If it shows as a `<JUNCTION>` pointing to the root `node_modules`, you're good.
+If this returns `True`, the junction is working correctly.
 
 ### Step 4: Configure the Manifest
 

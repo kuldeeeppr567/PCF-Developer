@@ -36,10 +36,26 @@ for (const dir of controlDirs) {
     const controlPath = path.join(controlsDir, dir.name);
     const targetNM = path.join(controlPath, "node_modules");
 
-    // Skip if node_modules already exists (junction or real folder)
+    // Check if node_modules already exists
     if (fs.existsSync(targetNM)) {
-        skipped++;
-        continue;
+        // Verify the junction is valid (points to root node_modules that has pcf-scripts)
+        const pcfScriptsCheck = path.join(targetNM, "pcf-scripts");
+        if (fs.existsSync(pcfScriptsCheck)) {
+            skipped++;
+            continue;
+        }
+        // Junction exists but is broken — remove and recreate
+        try {
+            fs.rmSync(targetNM, { recursive: false });
+        } catch {
+            // If rmSync fails (it's a junction), use platform-specific removal
+            if (process.platform === "win32") {
+                execSync(`cmd /c rmdir "${targetNM}"`, { stdio: "pipe" });
+            } else {
+                fs.unlinkSync(targetNM);
+            }
+        }
+        console.log(`  ⚠ Removed broken junction: controls/${dir.name}/node_modules`);
     }
 
     // Create junction (works on Windows without admin privileges)
