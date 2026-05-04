@@ -15,6 +15,51 @@ Modify an existing PCF control project. This includes adding new properties, edi
 - User says "integrate library Z into my control"
 - User provides an image and says "update my control to look like this"
 - User wants to fix a bug or improve an existing control
+- User just created a control and immediately asks for modifications
+- User returns to an existing control they built earlier and wants changes
+
+## Scenarios
+
+This skill handles two distinct scenarios:
+
+### Scenario A: Just-Created Control (Same Session)
+The user just created a control using `create-pcf` or `create-pcf-from-image` and immediately asks for changes (e.g., "add a reset button", "change the color to red", "make it support decimals too"). In this case:
+- You already know the control location and structure from the creation session
+- Skip the discovery/locate steps — go directly to understanding what needs to change
+- For simple tweaks (color change, text update), apply immediately without questions
+
+### Scenario B: Existing Control (Different Session or Pre-existing)
+The user references a control that was built earlier or already exists in the `controls/` folder. In this case:
+- You need to **locate** and **read** the control first
+- You may need to ask which control (if multiple exist)
+- You should understand the current implementation before proposing changes
+
+## Discovery Phase — Understand Before Editing
+
+### For Scenario A (just created):
+- **Simple changes** (styling tweak, rename, add a class): Apply directly, no questions needed.
+- **Behavioral changes** (add new property, change interaction model): Briefly confirm what the user wants, then proceed.
+
+### For Scenario B (existing control):
+1. **Locate the control** — List `controls/` to find it, or ask the user which one:
+   > "I see these controls in your workspace: [list]. Which one should I modify?"
+
+2. **Read and understand** — Read manifest, index.ts, and CSS to understand current behavior.
+
+3. **Confirm the change** — For non-trivial edits, summarize what you'll change:
+   > "Currently the control [does X]. I'll modify it to [do Y] by [changing Z]. This will affect [scope]. Sound good?"
+
+### When to Ask Questions (either scenario):
+- The requested change is ambiguous (e.g., "make it better" — better how?)
+- The change could break existing behavior (e.g., "change the property type" — this breaks existing form bindings)
+- Multiple valid approaches exist (e.g., "add filtering" — client-side vs FetchXML vs WebAPI?)
+- The image shows a redesign but it's unclear which parts to keep vs replace
+
+### When NOT to Ask:
+- Clear, specific request (e.g., "change the background to #ff0000")
+- Bug fix with obvious solution
+- Adding something that doesn't affect existing functionality
+- User explicitly says "just do it" or describes exactly what they want
 
 ## Required Tools
 - `read_file` — To read existing control code
@@ -27,9 +72,19 @@ Modify an existing PCF control project. This includes adding new properties, edi
 
 ## Execution Steps
 
-### Step 1: Understand the Existing Control
+### Step 1: Locate and Understand the Existing Control
 
-Read the key files to understand the current implementation:
+#### If continuing from a just-created control (Scenario A):
+Skip the locate step — you already know the path and structure. Jump to reading only the files relevant to the change.
+
+#### If working with a pre-existing control (Scenario B):
+1. **Find the control:**
+   ```bash
+   Get-ChildItem "controls" -Directory | Select-Object Name
+   ```
+   If multiple controls exist and the user didn't specify which one, ask.
+
+2. **Read the key files** to understand the current implementation:
 
 1. **Read the manifest** — `ControlManifest.Input.xml`
    - Current properties (names, types, usage)
