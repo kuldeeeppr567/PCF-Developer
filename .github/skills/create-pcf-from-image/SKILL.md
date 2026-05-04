@@ -51,23 +51,52 @@ Based on the image analysis, determine:
 | Complex interactive widget with React UI | React virtual control |
 | Simple value display/edit | Field control (`standard`) |
 
-### Step 3: Ask Clarifying Questions (if needed)
+### Step 3: Discovery Phase — Confirm Before Building
 
-If the image is ambiguous, ask the user using `vscode_askQuestions`:
+After analyzing the image, assess what you CAN determine visually versus what remains unclear. Then ask clarifying questions **before** writing any code.
 
-**Questions to consider:**
-- "Is this a field control (binds to one value) or a dataset control (displays multiple records)?"
-- "What data type should this bind to? (text, number, date, option set)"
-- "What should happen when the user interacts with [specific element]?"
-- "Should this be read-only, editable, or both?"
-- "Are there hover/focus states that aren't visible in the image?"
-- "What namespace and control name would you like?"
-- "Should this use React or standard DOM manipulation?"
+#### How Many Questions to Ask
 
-**Do NOT ask if:**
-- The control type is obvious from the image
-- The user already specified details in their message
-- The behavior is standard/expected for that type of UI element
+- **0 questions** — The image is crystal clear (e.g., a simple toggle switch) AND the user's prompt fully explains the behavior and data binding. Proceed directly.
+- **1-2 questions** — You understand the visual design well but need to confirm behavior or data binding (e.g., image shows a card layout but unclear if it's read-only or editable).
+- **2-4 questions** — The image shows a complex or ambiguous control (e.g., a multi-step form, a dashboard widget, a drag-and-drop interface) where interactions aren't obvious from visuals alone.
+
+#### How to Ask
+
+- Ask **one question at a time** — wait for the response before asking the next
+- Start each question by briefly stating what you understood from the image, then ask what's unclear
+- Provide **concrete examples or options** so the user doesn't start from scratch
+- Stop asking once you have enough confidence to build
+
+#### What to Discover (pick only what's unclear from the image + prompt)
+
+1. **Interaction behavior** (ask when the image shows interactive elements but actions aren't obvious):
+   > "I can see [describe what you see, e.g., 'a row of 5 stars with 3 filled']. What should happen when the user clicks? For example: clicking the 4th star sets rating to 4, or clicking a filled star clears it, or stars fill on hover before click?"
+
+2. **Data binding** (ask when it's unclear what field type this maps to):
+   > "This looks like it displays [describe the data, e.g., 'a percentage value']. Should it bind to a whole number (0-100), a decimal (0.0-1.0), or a text field that you format yourself?"
+
+3. **States and transitions** (ask when the image shows only one state):
+   > "I can see the [active/default] state. How should it look when [disabled/empty/error/hover]? For example: grayed out when disabled, red border on error, placeholder text when empty?"
+
+4. **Scope and boundaries** (ask for complex images showing multiple components):
+   > "The image shows [describe full picture]. Should the PCF control include all of this, or just the [specific part]? For example, should I include the header/label or just the interactive widget itself?"
+
+5. **Editable vs read-only** (ask when the image could be either):
+   > "Should the user be able to change the value through this control, or is it display-only? If editable, should changes save immediately or require confirmation?"
+
+#### Do NOT Ask If:
+- The control type is obvious from the image (a slider is a slider)
+- The user already explained the behavior in their prompt
+- The interaction is standard for that UI pattern (e.g., a checkbox toggles)
+- It's a purely cosmetic question you can decide yourself (exact shade of gray, font choice)
+
+#### After Discovery — Summarize and Proceed
+
+Before building, briefly confirm your understanding:
+> "Got it. I'll create a [control type] that [brief description of behavior]. It will bind to [data type] and [key interactions]. Let me build this now."
+
+Then proceed to Step 4.
 
 ### Step 4: Map Visual Elements to HTML Structure
 
