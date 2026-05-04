@@ -28,6 +28,23 @@ Before scaffolding, gather the following from the user (ask if not provided):
 
 ## Execution Steps
 
+### Step 0: Verify Prerequisites
+
+Before creating any control, check that shared dependencies are installed:
+
+```bash
+cd <repo-root>
+if (Test-Path "node_modules/pcf-scripts") { "Dependencies OK" } else { npm install }
+```
+
+If `node_modules/pcf-scripts` does NOT exist, run `npm install` from the repo root first. This ensures the shared workspace packages are available before scaffolding begins.
+
+Also verify `pac` CLI is available:
+```bash
+pac --version
+```
+If `pac` is not found, install it: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`
+
 ### Step 1: Create Project Directory Inside `controls/` Workspace
 
 This repo uses **npm workspaces** — all controls go in the `controls/` folder and share a single `node_modules/` at the repo root. This means dependencies install only once, not per control.
