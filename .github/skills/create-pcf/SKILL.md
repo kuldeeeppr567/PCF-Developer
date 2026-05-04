@@ -13,9 +13,40 @@ Scaffold a complete, working PCF control project from scratch. This skill handle
 - User names a control and wants it built from scratch
 - User specifies a control type (field, dataset, React)
 
-## Required Information
+## Discovery Phase — Ask Before You Build
 
-Before scaffolding, gather the following from the user (ask if not provided):
+Before jumping into scaffolding, assess how much information you already have from the user's prompt. Your goal is to understand WHAT the user wants to build, not just the technical parameters.
+
+### When to Ask Questions
+- **Skip questions** if the user's prompt is very specific (e.g., "Create a toggle switch that binds to a Yes/No field with a blue theme")
+- **Ask 1-2 questions** for moderately clear requests (e.g., "Create a rating control")
+- **Ask 2-4 questions** for vague or complex requests (e.g., "Create a control for managing tags" or "I need something for file uploads")
+
+### How to Ask
+- Ask **one question at a time** — wait for the answer before asking the next
+- Provide **hints or examples** in each question so the user isn't starting from a blank slate
+- Keep questions conversational, not like a form
+- Stop asking as soon as you have enough to build confidently
+
+### What to Discover
+
+Adapt which questions you ask based on what's missing from the user's prompt:
+
+1. **Purpose & Usage** (ask if the user only gave a name, no context):
+   > "How will this control be used? For example: replacing a text field on a form, displaying data in a custom way, capturing user input like signatures/ratings/selections, etc."
+
+2. **Visual Behavior** (ask if the UI isn't obvious from the description):
+   > "What should it look like or behave like? For example: a slider with min/max labels, a star rating with hover effects, a tag input with autocomplete, a card layout for records, etc."
+
+3. **Data Binding** (ask if unclear what data type it should bind to):
+   > "What kind of data will this control work with? For example: a single text value, a number (integer/decimal/currency), a yes/no toggle, a date, an option set, or a full dataset/grid of records?"
+
+4. **Special Requirements** (ask only for complex controls):
+   > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, must be accessible with screen readers, needs to call an external API, etc."
+
+### After Discovery — Map to Technical Parameters
+
+Once you have enough context, determine these values (use defaults where the user didn't specify):
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -25,6 +56,8 @@ Before scaffolding, gather the following from the user (ask if not provided):
 | `boundPropertyType` | For field controls: the data type to bind to | `SingleLine.Text` |
 | `description` | Short description of the control | `A custom PCF control` |
 | `publisherPrefix` | Publisher prefix for deployment | `custom` |
+
+> **Note:** Do NOT ask the user for `namespace`, `publisherPrefix`, or `boundPropertyType` directly unless they're advanced users. Infer these from context. For example, if they say "a control for rating 1-5 stars", you know it's `Whole.None` bound to a number field.
 
 ## Execution Steps
 
