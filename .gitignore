@@ -13,6 +13,8 @@ dist/
 **/generated/
 
 # Solution packages
+solutions/*/bin/
+solutions/*/obj/
 *.zip
 *.msapp
 

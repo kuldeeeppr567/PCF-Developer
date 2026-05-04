@@ -36,14 +36,14 @@ Before deployment, verify:
 Always build first to ensure there are no errors:
 
 ```bash
-cd <ControlProjectDirectory>
+cd controls/<ControlName>
 npm run build
 ```
 
 **If build fails:**
 - Check TypeScript errors and fix them
 - Verify manifest references match actual files
-- Ensure all dependencies are installed (`npm install`)
+- Ensure dependencies are linked (`npm install` from repo root)
 - Check for missing imports
 
 **If build succeeds:**
@@ -89,15 +89,15 @@ For proper ALM and distribution:
 #### 3B.1: Create Solution Project (if not exists)
 
 ```bash
-# Create a directory for the solution
-mkdir <ControlName>Solution
-cd <ControlName>Solution
+# Create a directory for the solution (at repo root, outside controls/)
+mkdir solutions/<ControlName>Solution
+cd solutions/<ControlName>Solution
 
 # Initialize the solution project
 pac solution init --publisher-name <PublisherName> --publisher-prefix <prefix>
 
 # Add reference to the PCF control
-pac solution add-reference --path ../<ControlName>
+pac solution add-reference --path ../../controls/<ControlName>
 ```
 
 #### 3B.2: Build the Solution

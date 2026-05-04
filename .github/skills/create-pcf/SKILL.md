@@ -28,8 +28,12 @@ Before scaffolding, gather the following from the user (ask if not provided):
 
 ## Execution Steps
 
-### Step 1: Create Project Directory
+### Step 1: Create Project Directory Inside `controls/` Workspace
+
+This repo uses **npm workspaces** — all controls go in the `controls/` folder and share a single `node_modules/` at the repo root. This means dependencies install only once, not per control.
+
 ```bash
+cd controls
 mkdir <controlName>
 cd <controlName>
 ```
@@ -51,10 +55,17 @@ pac pcf init --namespace <namespace> --name <controlName> --template dataset
 pac pcf init --namespace <namespace> --name <controlName> --template field --framework react
 ```
 
-### Step 3: Install Dependencies
+### Step 3: Install Dependencies (Shared Workspace)
+
+Run from the **repository root** (not inside the control folder):
 ```bash
+cd <repo-root>
 npm install
 ```
+
+This links the new control into the workspace. Since dependencies are shared, this takes ~2-5 seconds (no re-download). If this is the very first control being created, it takes longer (~30-60s) as the shared packages install once.
+
+> **Important:** Do NOT run `npm install` inside the control folder. Always run it from the repo root to use the shared workspace.
 
 ### Step 4: Configure the Manifest
 
@@ -340,18 +351,21 @@ Create `css/{{controlName}}.css`:
 ```
 
 ### Step 8: Verify Build
+
+Build from within the control folder:
 ```bash
+cd controls/<controlName>
 npm run build
 ```
 
 ## Output Confirmation
 
 After scaffolding, confirm with the user:
-- ✅ Project initialized at `./<controlName>/`
+- ✅ Project initialized at `controls/<controlName>/`
 - ✅ Manifest configured with correct properties
 - ✅ index.ts has full lifecycle implementation
 - ✅ CSS file created with scoped styles
-- ✅ Dependencies installed
+- ✅ Dependencies linked via workspace (shared `node_modules/`)
 - ✅ Build succeeds
 
 ## Common Property Type Mappings

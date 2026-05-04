@@ -86,11 +86,19 @@ cd pcf-developer-agent
 code .
 ```
 
-### Step 3: Accept Recommended Extensions
+### Step 3: Install Shared Dependencies
+
+```bash
+npm install
+```
+
+This installs the shared PCF build tooling once. All controls you create will reuse these dependencies — no reinstall needed per control.
+
+### Step 4: Accept Recommended Extensions
 
 VS Code will prompt to install recommended extensions (GitHub Copilot, Power Platform Tools). Click **Install All**.
 
-### Step 4: Select the Agent
+### Step 5: Select the Agent
 
 1. Open **Copilot Chat** (`Ctrl+Shift+I`)
 2. Click the **mode dropdown** (where it says "Agent" / "Ask" / "Plan")
@@ -154,9 +162,9 @@ Bind to SingleLine.Text and store hex color values.
 ```
 
 The agent will:
-1. Create the project folder
+1. Create the project folder in `controls/`
 2. Run `pac pcf init`
-3. Install dependencies
+3. Link dependencies via workspace (`npm install` from root — fast!)
 4. Generate the manifest, TypeScript, and CSS
 5. Build and verify
 
@@ -249,25 +257,49 @@ npm run build → pac solution init → dotnet build → pac solution import (pr
 
 ## 9. Where Controls Are Created
 
-Controls are generated as folders **at the workspace root**:
+Controls are generated inside the `controls/` folder using **npm workspaces**:
 
 ```
 pcf-developer-agent/              ← workspace root
 ├── .github/                      ← agent tooling (committed)
 ├── docs/                         ← documentation (committed)
 ├── templates/                    ← reference templates (committed)
-├── RatingStars/                  ← YOUR generated control
-│   ├── RatingStars/
-│   │   ├── ControlManifest.Input.xml
-│   │   ├── index.ts
-│   │   ├── css/RatingStars.css
-│   │   └── generated/
-│   ├── package.json
-│   └── tsconfig.json
-└── ColorPicker/                  ← another generated control
+├── package.json                  ← root workspace config
+├── node_modules/                 ← SHARED dependencies (one copy!)
+├── controls/
+│   ├── RatingStars/              ← YOUR generated control
+│   │   ├── RatingStars/
+│   │   │   ├── ControlManifest.Input.xml
+│   │   │   ├── index.ts
+│   │   │   ├── css/RatingStars.css
+│   │   │   └── generated/
+│   │   ├── package.json          ← workspace member
+│   │   └── tsconfig.json
+│   └── ColorPicker/              ← another generated control
+└── solutions/                    ← solution packages (for deployment)
 ```
 
-> **Note:** Generated control folders contain `node_modules/` and build outputs which are git-ignored. Only commit your control source code if you want to version it.
+### Why npm Workspaces?
+
+| Without Workspaces | With Workspaces |
+|---|---|
+| `npm install` per control (~60s each) | `npm install` once at root (~60s total) |
+| 550 packages duplicated per control | 550 packages shared across all controls |
+| ~200MB disk per control | ~200MB total for all controls |
+
+### First-Time Setup
+
+```bash
+npm install    # Run ONCE from repo root
+```
+
+### After Creating a New Control
+
+```bash
+npm install    # Run from repo root — links new workspace in ~2 seconds
+```
+
+> **Note:** Build outputs (`out/`) and `generated/` folders are git-ignored. Commit your control source code if you want to version it.
 
 ---
 

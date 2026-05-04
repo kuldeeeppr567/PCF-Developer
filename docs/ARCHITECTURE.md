@@ -119,20 +119,32 @@ The agent declares tool aliases that grant specific capabilities:
 
 ## Where Generated Controls Live
 
-Controls are created as **sibling folders** at the workspace root:
+Controls are created inside `controls/` using **npm workspaces** for shared dependencies:
 
 ```
 pcf-developer-agent/           ← this repo (workspace root)
 ├── .github/                   ← agent tooling
 ├── templates/                 ← reference boilerplate
-├── RatingStars/              ← generated control
-│   ├── RatingStars/
-│   │   ├── ControlManifest.Input.xml
-│   │   ├── index.ts
-│   │   └── css/
-│   ├── package.json
-│   └── tsconfig.json
-└── AnotherControl/           ← another generated control
+├── package.json               ← workspace root config: { "workspaces": ["controls/*"] }
+├── node_modules/              ← SHARED (installed once, used by all controls)
+├── controls/
+│   ├── RatingStars/           ← generated control
+│   │   ├── RatingStars/
+│   │   │   ├── ControlManifest.Input.xml
+│   │   │   ├── index.ts
+│   │   │   └── css/
+│   │   ├── package.json       ← workspace member (references shared deps)
+│   │   └── tsconfig.json
+│   └── AnotherControl/        ← another generated control
+└── solutions/                 ← solution packages for deployment
 ```
 
-These generated folders are git-ignored (`node_modules/`, `out/`, etc.) so they don't pollute the agent repo.
+### npm Workspaces Explained
+
+The root `package.json` declares `"workspaces": ["controls/*"]`. This means:
+- All packages in `controls/*/package.json` share the root `node_modules/`
+- `npm install` at root installs dependencies **once** for all controls
+- Adding a new control only requires `npm install` at root (~2 seconds to link)
+- Each control can still run `npm run build` independently
+
+Build outputs (`out/`, `generated/`) are git-ignored.
