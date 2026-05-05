@@ -12,7 +12,7 @@ dist/
 # PCF generated files
 **/generated/
 
-# User-created controls (keep only controls/README.md)
+# User-created controls (each control has its own dependencies)
 controls/*/
 
 # Solution packages

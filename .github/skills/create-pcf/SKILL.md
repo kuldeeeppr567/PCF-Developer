@@ -63,24 +63,15 @@ Once you have enough context, determine these values (use defaults where the use
 
 ### Step 0: Verify Prerequisites
 
-Before creating any control, check that shared dependencies are installed:
-
-```bash
-cd <repo-root>
-if (Test-Path "node_modules/pcf-scripts") { "Dependencies OK" } else { npm install }
-```
-
-If `node_modules/pcf-scripts` does NOT exist, run `npm install` from the repo root first. This ensures the shared workspace packages are available before scaffolding begins.
-
-Also verify `pac` CLI is available:
+Verify `pac` CLI is available:
 ```bash
 pac --version
 ```
 If `pac` is not found, install it: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`
 
-### Step 1: Create Project Directory Inside `controls/` Workspace
+### Step 1: Create Project Directory Inside `controls/`
 
-This repo uses **npm workspaces** — all controls go in the `controls/` folder and share a single `node_modules/` at the repo root. This means dependencies install only once, not per control.
+All controls go in the `controls/` folder. Each control is fully self-contained with its own `node_modules/`.
 
 ```bash
 cd controls
@@ -105,47 +96,18 @@ pac pcf init --namespace <namespace> --name <controlName> --template dataset
 pac pcf init --namespace <namespace> --name <controlName> --template field --framework react
 ```
 
-### Step 2b: Rename Package (CRITICAL — Do This Before npm install)
+### Step 3: Install Dependencies
 
-`pac pcf init` generates `"name": "pcf-project"` in every control's `package.json`. This causes **npm workspace name collisions** if you have more than one control. You MUST rename it to a unique name IMMEDIATELY after init, BEFORE running `npm install`:
+Run `npm install` **inside the control folder**. Each control manages its own dependencies independently:
 
 ```bash
-# Inside controls/<controlName>/package.json, change:
-"name": "pcf-project"
-# To:
-"name": "pcf-<controlname-lowercase>"
-```
-
-For example, for a control named `Slider`:
-```json
-"name": "pcf-slider"
-```
-
-> **Why this is critical:** npm workspaces require unique package names. If two controls both have `"name": "pcf-project"`, `npm install` will fail or remove packages unexpectedly. ALWAYS rename before install.
-
-### Step 3: Install Dependencies (Shared Workspace)
-
-Run from the **repository root** (not inside the control folder):
-```bash
-cd <repo-root>
 npm install
 ```
 
-This does two things:
-1. Links the new control into the workspace and installs shared packages (fast if not the first control)
-2. Automatically creates a **directory junction** from `controls/<controlName>/node_modules` → root `node_modules/` via the `postinstall` script
+This installs `pcf-scripts`, `pcf-start`, TypeScript, and other PCF tooling into the control's own `node_modules/`. Takes ~30-45 seconds for the first control, faster on subsequent ones due to npm cache.
 
-The junction is required because PCF tooling (`pcf-scripts`, `pcf-start`) expects `node_modules` to exist locally in the control folder. The junction is a zero-cost pointer — no disk duplication.
-
-> **Important:** Do NOT run `npm install` inside the control folder. Always run it from the repo root.
-> **Important:** Do NOT modify `tsconfig.json` paths — the junction makes the default `./node_modules/pcf-scripts/tsconfig_base.json` resolve correctly.
+> **Important:** Run `npm install` from INSIDE the control folder (e.g., `controls/Slider/`), NOT from the repo root.
 > **Important:** Run `npm install` ONLY ONCE per control creation. If the build fails after install, the issue is NOT dependencies — check manifest XML syntax or TypeScript errors instead.
-
-**Verify the junction was created:**
-```bash
-Test-Path "controls/<controlName>/node_modules/pcf-scripts"
-```
-If this returns `True`, the junction is working correctly.
 
 ### Step 4: Configure the Manifest
 
@@ -445,7 +407,7 @@ After scaffolding, confirm with the user:
 - ✅ Manifest configured with correct properties
 - ✅ index.ts has full lifecycle implementation
 - ✅ CSS file created with scoped styles
-- ✅ Dependencies linked via workspace (shared `node_modules/`)
+- ✅ Dependencies installed (`node_modules/` in control folder)
 - ✅ Build succeeds
 
 ## Post-Creation Workflow

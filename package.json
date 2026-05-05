@@ -2,13 +2,5 @@
   "name": "pcf-developer-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "PCF Developer Agent — Shared workspace for Power Apps Component Framework controls",
-  "workspaces": [
-    "controls/*"
-  ],
-  "scripts": {
-    "postinstall": "node scripts/postinstall.js",
-    "build:all": "npm run --workspaces build",
-    "clean": "rimraf controls/*/out controls/*/node_modules/.cache"
-  }
+  "description": "PCF Developer Agent — Repository for Power Apps Component Framework controls"
 }

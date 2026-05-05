@@ -43,7 +43,7 @@ npm run build
 **If build fails:**
 - Check TypeScript errors and fix them
 - Verify manifest references match actual files
-- Ensure dependencies are linked (`npm install` from repo root)
+- Ensure dependencies are installed (`npm install` inside the control folder)
 - Check for missing imports
 
 **If build succeeds:**
