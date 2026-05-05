@@ -40,17 +40,31 @@ Phase 6: OFFER DEPLOYMENT         → Ask user if they want to deploy to CRM
 
 ## Phase 1: Check Prerequisites
 
-Verify the developer environment has the required tools:
+Verify the developer environment has ALL required tools. Run each command:
 
 ```bash
-node --version
-npm --version
-pac --version
+node --version      # Required: 18.x or higher
+npm --version       # Required: comes with Node.js
+dotnet --version    # Required: 6.0 or higher
+pac --version       # Required: Power Platform CLI
 ```
 
-**All three must succeed.** If any fails:
-- `node`/`npm` not found → Tell user to install Node.js from https://nodejs.org
-- `pac` not found → Run: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`
+**ALL FOUR must succeed.** If any fails, tell the user EXACTLY what to install and stop:
+
+| Tool | Minimum Version | Install Instructions |
+|------|----------------|---------------------|
+| `node` | 18.x+ | Install from https://nodejs.org (LTS recommended) |
+| `npm` | (any) | Comes with Node.js — reinstall Node.js if missing |
+| `dotnet` | 6.0+ | Install from https://dotnet.microsoft.com/download |
+| `pac` | (any) | Run: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool` |
+
+**Why each is needed:**
+- `node` + `npm` → Install dependencies, build control, run preview
+- `dotnet` → Export solution packages (`dotnet build`), required by `pac solution`
+- `pac` → Scaffold control (`pac pcf init`), push to environment, create solutions
+
+**Do NOT proceed to Phase 2 until ALL four checks pass.**
+If a tool is missing, show the install command and STOP. Do not attempt to create the control without all prerequisites.
 
 Only proceed to Phase 2 after ALL prerequisites pass.
 

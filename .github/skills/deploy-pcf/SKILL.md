@@ -23,11 +23,23 @@ Build, package, and deploy PCF controls to Power Platform environments. This ski
 
 ## Prerequisites
 
-Before deployment, verify:
-1. **Power Platform CLI** (`pac`) is installed and available
-2. **Node.js** and **npm** are installed
-3. **.NET SDK** or **MSBuild** is available (for solution packaging)
-4. **Authentication** is configured for the target environment
+Before deployment, verify ALL required tools by running:
+
+```bash
+node --version      # Required: for npm build
+npm --version       # Required: for npm build
+pac --version       # Required: for push/solution commands
+dotnet --version    # Required: for solution packaging (dotnet build)
+```
+
+**ALL must succeed.** If any fails:
+| Tool | Fix |
+|------|-----|
+| `node`/`npm` | Install from https://nodejs.org |
+| `pac` | Run: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool` |
+| `dotnet` | Install from https://dotnet.microsoft.com/download (6.0+) |
+
+**Do NOT proceed if any tool is missing.** Show the fix and STOP.
 
 ## Execution Steps
 
