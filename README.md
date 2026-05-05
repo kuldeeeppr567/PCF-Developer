@@ -21,21 +21,23 @@ This guide provides **step-by-step installation**, **usage examples**, and **tro
 
 1. [Security Posture](#1-security-posture)
 2. [Prerequisites](#2-prerequisites)
-3. [Installation](#3-installation)
-4. [Understanding the Agent](#4-understanding-the-agent)
-5. [Usage — Creating Controls](#5-usage--creating-controls)
-6. [Usage — Image-Based Creation](#6-usage--image-based-creation)
-7. [Usage — Editing Controls](#7-usage--editing-controls)
-8. [Usage — Deploying Controls](#8-usage--deploying-controls)
-9. [Where Controls Are Created](#9-where-controls-are-created)
-10. [Troubleshooting](#10-troubleshooting)
-11. [Best Practices](#11-best-practices)
+3. [Installation (Local)](#3-installation)
+4. [Using from Any Device (Codespaces)](#35-using-from-any-device-github-codespaces)
+5. [Understanding the Agent](#4-understanding-the-agent)
+6. [Usage — Creating Controls](#5-usage--creating-controls)
+7. [Usage — Image-Based Creation](#6-usage--image-based-creation)
+8. [Usage — Editing Controls](#7-usage--editing-controls)
+9. [Usage — Deploying Controls](#8-usage--deploying-controls)
+10. [Usage — Deleting Controls](#85-usage--deleting-controls)
+11. [Where Controls Are Created](#9-where-controls-are-created)
+12. [Troubleshooting](#10-troubleshooting)
+13. [Best Practices](#11-best-practices)
 
 ---
 
 ## 1. Security Posture
 
-> **Local-Only** — All AI-assisted work stays on your machine.
+> **Local-First** — All AI-assisted work stays on your machine (or in your private Codespace).
 
 | # | Principle | Description |
 |---|-----------|-------------|
@@ -101,6 +103,46 @@ VS Code will prompt to install recommended extensions (GitHub Copilot, Power Pla
 3. Select **"PCF Developer"**
 
 That's it. You're ready to build PCF controls with natural language.
+
+---
+
+## 3.5. Using from Any Device (GitHub Codespaces)
+
+You can use this agent from **any device with a browser** — mobile phone, tablet, or any computer without setup.
+
+### Requirements
+- GitHub account (free plan works)
+- GitHub Copilot subscription ($10/month or included with your org)
+
+### How to Start a Codespace
+
+1. Go to the repo on GitHub: `github.com/your-org/pcf-developer-agent`
+2. Click the green **"Code"** button
+3. Select the **"Codespaces"** tab
+4. Click **"Create codespace on main"**
+5. Wait ~2 minutes (first time only — installs Node.js, .NET, pac CLI automatically)
+6. VS Code opens in your browser — select **"PCF Developer"** agent mode
+7. Start chatting: *"Create a slider control with range 0 to 100"*
+
+### What's Pre-Installed in Codespaces
+| Tool | Version | Installed By |
+|------|---------|---|
+| Node.js | 18.x | Base image |
+| npm | (bundled) | Base image |
+| .NET SDK | 8.0 | devcontainer feature |
+| pac CLI | Latest | postCreateCommand |
+| GitHub Copilot | Latest | VS Code extension |
+
+### Port Forwarding (Preview)
+When you run `npm start watch`, port **8181** is automatically forwarded. The browser opens the test harness — works the same as local development.
+
+### Codespace Lifecycle
+- **Auto-sleeps** after 30 min of inactivity (saves your free hours)
+- **Resumes instantly** when you reopen it (no reinstall needed)
+- **Free tier:** 120 core-hours/month (≈ 60 hours on a 2-core machine — more than enough)
+
+### Deploy from Codespace
+`pac auth create` and `pac pcf push` work identically — the login flow opens in a new browser tab.
 
 ---
 
