@@ -171,8 +171,54 @@ Follow the `create-pcf` skill steps but with the design-specific implementation:
 After generating the code, provide a summary:
 - List the key visual elements identified and how they were implemented
 - Note any assumptions made about interactive behavior
-- Suggest running `npm start watch` to see the control in the test harness
-- Offer to adjust colors, spacing, or behavior based on user feedback
+
+### Step 9: Show Control Info (MANDATORY)
+
+Display a structured summary to the user (same format as `create-pcf` Phase 4):
+- What the control does
+- Control details table (location, type, namespace, binding)
+- How to add to a model-driven app
+- Key features list
+
+### Step 10: Offer Preview (MANDATORY)
+
+Use `vscode_askQuestions` to ask:
+```
+Question: "Would you like to preview the control in the test harness?"
+Message: "I'll run `npm start watch` in `controls/<controlName>/` — this opens the control at http://localhost:8181 in your browser."
+Options:
+  - "Yes, start preview" (recommended)
+  - "No, skip preview"
+```
+
+**If "Yes, start preview":**
+1. Run `npm start watch` using `run_in_terminal` with `mode=async`
+2. Store the terminal ID for later cleanup
+3. Tell user: "Preview server is running at http://localhost:8181."
+4. When user comes back, ask via `vscode_askQuestions`:
+   ```
+   Question: "Would you like to stop the preview server?"
+   Options:
+     - "Stop preview" (recommended)
+     - "Keep it running"
+   ```
+5. If "Stop preview" → kill terminal with `kill_terminal`, then proceed to Step 11
+6. If "Keep it running" → proceed to Step 11
+
+**If "No, skip preview":** Proceed to Step 11.
+
+### Step 11: Offer Deployment (MANDATORY)
+
+Use `vscode_askQuestions`:
+```
+Question: "Would you like to deploy this control to your Power Platform environment?"
+Options:
+  - "Yes, deploy now"
+  - "No, maybe later"
+```
+
+**If "Yes, deploy now":** Ask for environment URL and publisher prefix, then invoke `deploy-pcf` skill.
+**If "No, maybe later":** End with: "You can deploy anytime later by saying *'Deploy <controlName>'*."
 
 ## Image Analysis Patterns
 

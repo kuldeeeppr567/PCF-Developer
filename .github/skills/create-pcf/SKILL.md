@@ -291,40 +291,80 @@ Show a structured summary:
 
 ## Phase 5: Offer Preview (MANDATORY)
 
-After showing the control info, ask:
+After showing the control info, ask the user if they want to preview using `vscode_askQuestions`:
 
-> **Would you like to preview the control in the test harness?** I'll run `npm start watch` and it will open at http://localhost:8181 in your browser.
+**Use `vscode_askQuestions` with these options:**
+```
+Question: "Would you like to preview the control in the test harness?"
+Message: "I'll run `npm start watch` in `controls/<controlName>/` — this opens the control at http://localhost:8181 in your browser."
+Options:
+  - "Yes, start preview" (recommended)
+  - "No, skip preview"
+```
 
-- If user says **yes/ok/run/sure** → Run:
-  ```bash
-  cd controls/<controlName>
-  npm start watch
-  ```
-  Then tell the user: *"The preview server is running. Open http://localhost:8181 in your browser. You can interact with the control and set property values in the harness. Come back here when you're done."*
+### If user selects "Yes, start preview":
 
-- If user says **no/skip** → Proceed to Phase 6.
+1. **Run the preview server in async mode** so it stays running:
+   ```bash
+   cd controls/<controlName>
+   npm start watch
+   ```
+   Use `run_in_terminal` with `mode=async` so the terminal keeps running.
 
-- If user comes back after preview (says anything after the browser was opened) → Proceed to Phase 6.
+2. **Store the terminal ID** — you will need it to kill the server later.
+
+3. **Tell the user:**
+   > "Preview server is running at http://localhost:8181. You can interact with the control in the test harness. Come back here when you're done."
+
+4. **When the user comes back** (sends any message after preview started), offer to stop the preview using `vscode_askQuestions`:
+   ```
+   Question: "Would you like to stop the preview server?"
+   Options:
+     - "Stop preview" (recommended)
+     - "Keep it running"
+   ```
+
+5. **If user selects "Stop preview":**
+   - Kill the terminal using `kill_terminal` with the stored terminal ID
+   - Confirm: "Preview server stopped."
+   - Proceed to Phase 6.
+
+6. **If user selects "Keep it running":**
+   - Proceed to Phase 6 (the server stays running in the background).
+
+### If user selects "No, skip preview":
+
+- Proceed directly to Phase 6.
 
 ---
 
 ## Phase 6: Offer Deployment (MANDATORY)
 
-After preview is done or declined, ask:
+After preview is done or declined, ask using `vscode_askQuestions`:
 
-> **Would you like to deploy this control to your Power Platform environment?**
+**Use `vscode_askQuestions` with these options:**
+```
+Question: "Would you like to deploy this control to your Power Platform environment?"
+Options:
+  - "Yes, deploy now"
+  - "No, maybe later"
+```
 
-- If user says **yes** → Ask for:
-  1. **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
-  2. **Publisher prefix** (e.g., `contoso`)
-  
-  Then invoke the `deploy-pcf` skill to handle:
-  - Authentication (`pac auth create --url <env-url>`)
-  - Quick push (`pac pcf push --publisher-prefix <prefix>`) — this opens login in the terminal/VS Code
-  - Confirm success
+### If user selects "Yes, deploy now":
 
-- If user says **no/later** → End with:
-  > "You can deploy anytime later by saying *'Deploy <controlName>'* in this chat."
+Ask for deployment details:
+1. **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
+2. **Publisher prefix** (e.g., `contoso`)
+
+Then invoke the `deploy-pcf` skill to handle:
+- Authentication (`pac auth create --url <env-url>`)
+- Quick push (`pac pcf push --publisher-prefix <prefix>`) — this opens login in the terminal/VS Code
+- Confirm success
+
+### If user selects "No, maybe later":
+
+End with:
+> "You can deploy anytime later by saying *'Deploy <controlName>'* in this chat."
 
 ---
 

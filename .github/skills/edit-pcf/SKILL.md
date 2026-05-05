@@ -292,18 +292,46 @@ If the build fails:
 3. Ensure all imports are correct
 4. Fix any CSS path issues
 
-### Step 6: Test Suggestions
+### Step 6: Offer Preview (MANDATORY after successful build)
 
-After successful edit, suggest:
-```bash
-npm start watch
+After a successful build, use `vscode_askQuestions` to offer preview:
+
+```
+Question: "Would you like to preview the updated control in the test harness?"
+Message: "I'll run `npm start watch` in `controls/<controlName>/` — this opens at http://localhost:8181."
+Options:
+  - "Yes, start preview" (recommended)
+  - "No, skip preview"
 ```
 
-Remind the user to verify:
-- New functionality works as expected
-- Existing functionality is preserved
-- Control handles edge cases (null values, disabled state)
-- Styling looks correct in the test harness
+**If "Yes, start preview":**
+1. Run `npm start watch` using `run_in_terminal` with `mode=async`
+2. Store the terminal ID for later cleanup
+3. Tell user: "Preview server is running at http://localhost:8181."
+4. When user comes back, ask via `vscode_askQuestions`:
+   ```
+   Question: "Would you like to stop the preview server?"
+   Options:
+     - "Stop preview" (recommended)
+     - "Keep it running"
+   ```
+5. If "Stop preview" → kill terminal with `kill_terminal`, then proceed to Step 7
+6. If "Keep it running" → proceed to Step 7
+
+**If "No, skip preview":** Proceed to Step 7.
+
+### Step 7: Offer Deployment (MANDATORY)
+
+Use `vscode_askQuestions`:
+```
+Question: "Would you like to deploy the updated control to your Power Platform environment?"
+Options:
+  - "Yes, deploy now"
+  - "No, maybe later"
+```
+
+**If "Yes, deploy now":** Ask for environment URL and publisher prefix, then invoke `deploy-pcf` skill.
+**If "No, maybe later":** End with: "You can deploy anytime later by saying *'Deploy <controlName>'*."
 
 ## Common Edit Patterns
 
