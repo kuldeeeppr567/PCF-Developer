@@ -92,8 +92,37 @@ cd controls/<ControlName>
 pac pcf push --publisher-prefix <prefix>
 ```
 
-**After successful push**, inform the user:
-> "✅ Control deployed successfully to your environment! You can now add it to a form in your model-driven app."
+**⚠️ IMPORTANT: Wait for command to fully complete.** The `pac pcf push` command is synchronous — it builds, creates a temporary solution, imports it, publishes customizations, and then deletes the temp solution. This takes 30-90 seconds. Do NOT confirm success until the command exits with code 0.
+
+**After the command exits successfully (exit code 0)**, inform the user:
+
+```
+## ✅ Control Deployed Successfully (⏱️ <deployment-time> seconds)
+
+Your control **<ControlName>** is now registered in your environment.
+
+### ⚠️ Important: About the Solution History
+If you check **Solutions → History** in Power Apps portal, you'll see:
+- `PowerAppsToolsTemp_<prefix>` with Operation: **Uninstall/Delete**
+
+**This is NORMAL and expected.** Here's why:
+- `pac pcf push` creates a **temporary** solution to transport the control
+- After the control is registered, it **deletes** the temp solution (cleanup)
+- Your control IS deployed — it's registered directly in the environment
+- The control will appear under **Custom Controls** when you add it to a form
+
+### Solution Type
+`pac pcf push` deploys as **Unmanaged** (development/testing only).
+For production deployment with a persistent, visible solution, use the **Solution Package** method.
+
+### Next Steps
+1. Open **make.powerapps.com** → your environment
+2. Navigate to your **Table** → **Forms** → select the form
+3. Click the **field** → **Properties** → **Controls** tab
+4. Click **"Add control"** → search for `<ControlName>`
+5. Select it, choose clients (Web / Phone / Tablet)
+6. **Save and Publish** the form
+```
 
 **Parameters to confirm with user:**
 - `--publisher-prefix` — The publisher prefix (e.g., `contoso`, `custom`)

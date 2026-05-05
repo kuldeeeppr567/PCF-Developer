@@ -128,6 +128,8 @@ If the user hasn't specified a folder, use `controls/` without asking. If you ne
 
 ## Phase 3: Build the Control
 
+**⏱️ START TIMER NOW** — Record the current time. You will calculate total creation duration after the build succeeds.
+
 ### Step 1: Create Project Directory
 
 **IMPORTANT:** Create the directory FIRST, then cd into it, then run `pac pcf init`. Do NOT run pac pcf init from the parent folder directly.
@@ -249,9 +251,9 @@ npm run build
 
 If the build fails, fix the TypeScript/manifest error and rebuild. Do NOT run `npm install` again.
 
-### Timing
+### ⏱️ STOP TIMER
 
-**Record the time** when Phase 3 starts (before creating the directory) and when the build succeeds. Calculate the total duration. You will display this in Phase 4.
+Calculate duration from Phase 3 start to now (successful build). Display as seconds in Phase 4 header.
 
 ---
 
@@ -376,14 +378,15 @@ After preview is done or declined, call `vscode_askQuestions` with exactly this 
 
 ### If user selects "Yes, deploy now":
 
-Ask for deployment details:
+Ask for deployment details using `vscode_askQuestions`:
 1. **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
 2. **Publisher prefix** (e.g., `contoso`)
 
-Then invoke the `deploy-pcf` skill to handle:
-- Authentication (`pac auth create --url <env-url>`)
-- Quick push (`pac pcf push --publisher-prefix <prefix>`) — this opens login in the terminal/VS Code
-- Confirm success
+Then invoke the `deploy-pcf` skill to handle deployment. Key points:
+- `pac pcf push` is **synchronous** — wait for command to exit (30-90 seconds)
+- Do NOT confirm success until exit code 0
+- Do NOT poll or check multiple times — one command, one wait
+- After success, explain that `PowerAppsToolsTemp` deletion in solution history is NORMAL
 
 ### If user selects "No, maybe later":
 
