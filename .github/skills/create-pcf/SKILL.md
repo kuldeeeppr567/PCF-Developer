@@ -20,22 +20,24 @@ Scaffold a complete, working PCF control project from scratch. This skill handle
 **Follow these phases IN ORDER. Do NOT skip or rearrange phases.**
 
 ```
-Phase 1: CHECK PREREQUISITES     → Verify tools exist
-Phase 2: UNDERSTAND REQUIREMENTS  → Read prompt, ask questions if needed
-Phase 3: BUILD THE CONTROL        → Scaffold, install, write code, compile
-Phase 4: SHOW CONTROL INFO        → Display what was built + CRM setup guide
-Phase 5: OFFER PREVIEW            → Ask user if they want to see it running
-Phase 6: OFFER DEPLOYMENT         → Ask user if they want to deploy to CRM
+Phase 1: CHECK PREREQUISITES       → Verify tools exist
+Phase 2: UNDERSTAND & CATEGORIZE    → Gather info, classify control, identify risks
+Phase 3: BUILD THE CONTROL          → Scaffold, install, write code, compile
+Phase 4: QUALITY CHECK              → Review code against CRM pitfalls
+Phase 5: SHOW CONTROL INFO          → Display what was built + CRM setup guide
+Phase 6: OFFER PREVIEW              → Ask user if they want to see it running
+Phase 7: OFFER DEPLOYMENT           → Ask user if they want to deploy to CRM
 ```
 
 **CRITICAL RULES:**
-- Do NOT start Phase 3 until Phase 2 is complete (all questions answered)
-- Do NOT skip Phase 4 — ALWAYS show the control info after build succeeds
-- Do NOT skip Phase 5 — ALWAYS ask about preview after showing info
-- Do NOT skip Phase 6 — ALWAYS ask about deployment after preview is done/declined
+- Do NOT start Phase 3 until Phase 2 is complete (all questions answered, control categorized)
+- Do NOT skip Phase 4 — ALWAYS run quality check before showing results
+- Do NOT skip Phase 5 — ALWAYS show the control info after quality check passes
+- Do NOT skip Phase 6 — ALWAYS ask about preview after showing info
+- Do NOT skip Phase 7 — ALWAYS ask about deployment after preview is done/declined
 - Do NOT run `npm install` more than ONCE
 - Do NOT use `context.accessibility.assignedTabIndex` — it does not exist in PCF typings. Use `tabIndex = 0` instead.
-- **ALWAYS use `vscode_askQuestions` tool for Phase 5 and Phase 6 — NEVER write yes/no questions as plain chat text. The user MUST see clickable option buttons.**
+- **ALWAYS use `vscode_askQuestions` tool for Phase 6 and Phase 7 — NEVER write yes/no questions as plain chat text. The user MUST see clickable option buttons.**
 
 ---
 
@@ -71,47 +73,107 @@ Only proceed to Phase 2 after ALL prerequisites pass.
 
 ---
 
-## Phase 2: Understand Requirements (Discovery)
+## Phase 2: Understand, Categorize & Plan
 
-### Assess the user's prompt
+### Step A: Gather Requirements
 
 Read the user's request carefully. Determine what you KNOW vs what's UNCLEAR.
 
-### When to Ask Questions
-- **Skip questions** if the user's prompt is very specific (e.g., "Create a toggle switch that binds to a Yes/No field with a blue theme")
-- **Ask 1-2 questions** for moderately clear requests (e.g., "Create a rating control")
-- **Ask 2-4 questions** for vague or complex requests (e.g., "Create a control for managing tags")
+**When to Ask Questions:**
+- **Skip questions** if the user's prompt is very specific (e.g., "Create a toggle switch that binds to a Yes/No field with a blue theme for model-driven app")
+- **Ask 1-3 questions** for moderately clear requests (e.g., "Create a rating control")
+- **Ask 3-5 questions** for vague or complex requests (e.g., "Create a control for managing tags")
 
-### How to Ask
+**How to Ask:**
 - Ask **one question at a time** — wait for the answer before asking the next
 - Provide **hints or examples** in each question
 - Keep questions conversational, not like a form
 - Stop asking as soon as you have enough to build confidently
 
-### What to Discover
+**What to Discover:**
 
 1. **Purpose & Usage** (ask if the user only gave a name, no context):
    > "How will this control be used? For example: replacing a text field on a form, displaying data in a custom way, capturing user input like signatures/ratings/selections, etc."
 
-2. **Visual Behavior** (ask if the UI isn't obvious from the description):
-   > "What should it look like or behave like? For example: a slider with min/max labels, a star rating with hover effects, a tag input with autocomplete, etc."
+2. **Target App** (ask if not specified — THIS IS IMPORTANT):
+   > "Where will this control be used? Options: Model-driven app (Dynamics 365 forms), Canvas app, or both?"
 
-3. **Data Binding** (ask if unclear what data type it should bind to):
-   > "What kind of data will this control work with? For example: a single text value, a number (integer/decimal/currency), a yes/no toggle, a date, an option set, or a dataset/grid of records?"
+3. **Visual Behavior** (ask if the UI isn't obvious from the description):
+   > "What should it look like or behave like? For example: a slider with min/max labels, a star rating with hover effects, a dropdown with custom styling, etc."
 
-4. **Special Requirements** (ask only for complex controls):
-   > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, needs to call an external API, etc."
+4. **Data Binding** (ask if unclear what data type it should bind to):
+   > "What kind of data will this control work with? For example: a single text value, a number, a yes/no toggle, a date, a dropdown/option set, or a dataset/grid of records?"
 
-### Target Folder (Optional Question)
+5. **Special Requirements** (ask only for complex controls):
+   > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, needs to call an external API, needs to work on mobile, etc."
 
-Controls are created in `controls/` by default. **Only ask** if:
-- The user explicitly mentions a different folder
-- The workspace has no `controls/` folder
+### Step B: Categorize the Control
 
-If the user hasn't specified a folder, use `controls/` without asking. If you need to ask:
-> "Where should I create this control? Default is `controls/` — press Enter to accept, or specify a different folder path."
+After gathering info, classify the control into ONE of these categories:
 
-### After Discovery — Map to Technical Parameters
+| Category | Characteristics | Key Risks |
+|----------|----------------|-----------|
+| **CHOICE** (OptionSet/TwoOptions/MultiSelect) | Binds to choice fields, shows options | Options not loading from CRM metadata |
+| **TEXT** (SingleLine/Multiple/Email/Phone/URL) | Binds to text fields | Null value handling, max-length enforcement |
+| **NUMBER** (Whole/Decimal/Currency/FP) | Binds to numeric fields | Min/max validation, formatting, null handling |
+| **DATE** (DateOnly/DateAndTime) | Binds to date fields | Timezone issues, locale formatting, null handling |
+| **LOOKUP** (Lookup.Simple) | Binds to lookup fields | Requires WebAPI, complex entity references |
+| **DATASET** (data-set) | Displays a grid/list of records | Paging, sorting, column detection, loading states |
+| **VISUAL-ONLY** (input property) | Doesn't bind to a field, uses input props | Simpler — fewer CRM runtime issues |
+
+### Step C: Identify Target App Constraints
+
+| Target App | Key Considerations |
+|---|---|
+| **Model-driven app** | White/light background, form field integration, disabled state support, field-level security |
+| **Canvas app** | Resizable container, custom colors via properties, `context.mode.allocatedWidth/Height`, theme-aware |
+| **Both** | Must support both resize modes, neutral styling, no hard-coded dimensions |
+
+### Step D: Plan Based on Category
+
+**For CHOICE controls (OptionSet/TwoOptions/MultiSelect):**
+- MUST use `context.parameters.value.attributes.Options` to get options dynamically
+- MUST NOT hardcode option values
+- MUST handle `raw === null` (no selection)
+- MUST handle disabled state (read-only field)
+- For TwoOptions: use `context.parameters.value.attributes.Options` (returns 2 items)
+
+**For TEXT controls:**
+- MUST handle `raw === null` (empty field)
+- MUST respect `context.parameters.value.attributes.MaxLength` if available
+- MUST handle disabled state
+- MUST sanitize display (use `textContent`, not `innerHTML`)
+
+**For NUMBER controls:**
+- MUST handle `raw === null`
+- MUST validate min/max if using input properties
+- MUST use `context.formatting.formatInteger()` or `formatDecimal()` for display
+- MUST handle disabled state
+
+**For DATE controls:**
+- MUST handle `raw === null`
+- MUST use `context.formatting.formatDateShort()` or `formatDateLong()`
+- MUST handle timezone awareness (dates come as UTC from CRM)
+- MUST handle disabled state
+
+**For DATASET controls:**
+- MUST handle empty dataset (`dataSet.sortedRecordIds.length === 0`)
+- MUST handle loading state (`dataSet.loading`)
+- MUST implement paging if `dataSet.paging.hasNextPage`
+- MUST read columns from `dataSet.columns` dynamically
+- MUST handle column visibility and order
+
+**For ALL controls (universal requirements):**
+- MUST check `context.mode.isControlDisabled` and disable interactions when true
+- MUST check `context.mode.isVisible` and hide when false
+- MUST use `context.updatedProperties` in `updateView()` to avoid unnecessary re-renders
+- MUST handle `null`/`undefined` values for ALL parameters
+- CSS MUST use a **light background-compatible** design (CRM forms are white/light)
+- CSS MUST scope all styles with a unique container class (avoid conflicts)
+- CSS MUST use readable contrast ratios (dark text on light backgrounds)
+- MUST call `this._notifyOutputChanged()` only when value actually changes
+
+### Step E: Map to Technical Parameters
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -119,8 +181,16 @@ If the user hasn't specified a folder, use `controls/` without asking. If you ne
 | `namespace` | Namespace for the control | `PCFControls` |
 | `controlType` | `field`, `dataset`, or `react` | `field` |
 | `boundPropertyType` | For field controls: the data type to bind to | `SingleLine.Text` |
+| `targetApp` | Where it will be used | `model-driven` |
+| `category` | Control category from Step B | (determined by type) |
 | `targetFolder` | Parent folder for the control | `controls` |
 | `description` | Short description of the control | `A custom PCF control` |
+
+### Target Folder (Optional Question)
+
+Controls are created in `controls/` by default. **Only ask** if:
+- The user explicitly mentions a different folder
+- The workspace has no `controls/` folder
 
 > **Note:** Infer technical params from context. If user says "rating 1-5 stars", you know it's `Whole.None`. Don't ask the user for namespace or property type directly.
 
@@ -253,13 +323,84 @@ If the build fails, fix the TypeScript/manifest error and rebuild. Do NOT run `n
 
 ### ⏱️ STOP TIMER
 
-Calculate duration from Phase 3 start to now (successful build). Display as seconds in Phase 4 header.
+Calculate duration from Phase 3 start to now (successful build). Display as seconds in Phase 5 header.
 
 ---
 
-## Phase 4: Show Control Information (MANDATORY)
+## Phase 4: Quality Check (MANDATORY)
 
-**IMMEDIATELY after a successful build**, display this information to the user. Do NOT skip this phase.
+**After a successful build, review your own code against the category-specific risks identified in Phase 2.**
+
+Do NOT skip this phase. Read the generated `index.ts` and verify:
+
+### Universal Checks (ALL controls):
+
+| Check | What to Verify | Fix If Missing |
+|-------|---------------|----------------|
+| Null handling | Every `context.parameters.X.raw` access has a null/undefined check | Add `if (value === null \|\| value === undefined)` with fallback |
+| Disabled state | `context.mode.isControlDisabled` is checked, interactions are blocked when true | Add disabled logic in `updateView` |
+| Visibility | Control respects `context.mode.isVisible` | Add visibility check |
+| Output safety | `notifyOutputChanged()` only called when value truly changed | Add comparison before calling |
+| CSS contrast | Text is readable on white/light background | Fix colors to ensure contrast ratio ≥ 4.5:1 |
+| XSS safety | No `innerHTML` with user data — use `textContent` or DOM APIs | Replace innerHTML with textContent |
+| Scoped CSS | All CSS rules use a unique container class prefix | Add container class |
+
+### Category-Specific Checks:
+
+**CHOICE controls:**
+| Check | Fix |
+|-------|-----|
+| Options loaded from `context.parameters.value.attributes.Options` | Replace any hardcoded options |
+| Handles `raw === null` (no selection) | Add fallback |
+| Handles disabled (no dropdown interaction) | Add disabled attribute |
+| Selected value matches by numeric value (not label text) | Use `.Value` not `.Label` for comparison |
+
+**TEXT controls:**
+| Check | Fix |
+|-------|-----|
+| Handles `raw === null` (empty) | Show empty/placeholder state |
+| Respects MaxLength if bound | Add `maxlength` attribute or trim |
+| Input event debounced before notifyOutputChanged | Add setTimeout debounce |
+
+**NUMBER controls:**
+| Check | Fix |
+|-------|-----|
+| Handles `raw === null` | Show empty/0 state |
+| Validates numeric input (no letters) | Add input validation |
+| Respects min/max from input properties | Add bounds checking |
+
+**DATE controls:**
+| Check | Fix |
+|-------|-----|
+| Handles `raw === null` | Show empty/placeholder |
+| Uses formatting utilities for display | Use `context.formatting.formatDateShort()` |
+
+**DATASET controls:**
+| Check | Fix |
+|-------|-----|
+| Handles empty dataset | Show "no records" state |
+| Handles loading state | Show loading indicator |
+| Reads columns dynamically from `dataSet.columns` | Remove hardcoded column names |
+| Paging supported if `dataSet.paging.hasNextPage` | Add load-more/next button |
+
+### Canvas App Checks (if targetApp includes canvas):
+| Check | Fix |
+|-------|-----|
+| Uses `context.mode.allocatedWidth` / `allocatedHeight` | Add responsive sizing |
+| No fixed pixel widths/heights on container | Use 100% or allocated dimensions |
+| Works with custom theme properties (if added) | Verify input properties are used for colors |
+
+### After Quality Check:
+
+- If ALL checks pass → Proceed to Phase 5
+- If any check FAILS → Fix the code, rebuild (`npm run build`), then proceed to Phase 5
+- Do NOT tell the user about the quality check process — just fix silently and show results
+
+---
+
+## Phase 5: Show Control Information (MANDATORY)
+
+**IMMEDIATELY after quality check passes**, display this information to the user. Do NOT skip this phase.
 
 Show a structured summary:
 
@@ -274,8 +415,11 @@ Show a structured summary:
 |----------|-------|
 | Location | `controls/<controlName>/` |
 | Type | Field / Dataset / React Virtual |
+| Category | <category from Phase 2 Step B> |
+| Target App | Model-driven / Canvas / Both |
 | Namespace | <namespace> |
 | Bound To | <boundPropertyType description> |
+| Quality Check | ✅ Passed |
 
 ### How to Add to a Model-Driven App (Dynamics 365 / Power Apps)
 
@@ -296,7 +440,7 @@ Show a structured summary:
 
 ---
 
-## Phase 5: Offer Preview (MANDATORY)
+## Phase 6: Offer Preview (MANDATORY)
 
 **⚠️ CRITICAL: You MUST use the `vscode_askQuestions` tool here. Do NOT just type a question in chat text. The user must see clickable buttons.**
 
@@ -344,18 +488,18 @@ After showing the control info, call `vscode_askQuestions` with exactly this str
 5. **If user selects "Stop preview":**
    - Kill the terminal using `kill_terminal` with the stored terminal ID
    - Confirm: "Preview server stopped."
-   - Proceed to Phase 6.
+   - Proceed to Phase 7.
 
 6. **If user selects "Keep it running":**
-   - Proceed to Phase 6 (the server stays running in the background).
+   - Proceed to Phase 7 (the server stays running in the background).
 
 ### If user selects "No, skip preview":
 
-- Proceed directly to Phase 6.
+- Proceed directly to Phase 7.
 
 ---
 
-## Phase 6: Offer Deployment (MANDATORY)
+## Phase 7: Offer Deployment (MANDATORY)
 
 **⚠️ CRITICAL: You MUST use the `vscode_askQuestions` tool here. Do NOT just type a question in chat text. The user must see clickable buttons.**
 
