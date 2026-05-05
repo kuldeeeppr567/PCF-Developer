@@ -87,6 +87,15 @@ Read the user's request carefully. Determine what you KNOW vs what's UNCLEAR.
 4. **Special Requirements** (ask only for complex controls):
    > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, needs to call an external API, etc."
 
+### Target Folder (Optional Question)
+
+Controls are created in `controls/` by default. **Only ask** if:
+- The user explicitly mentions a different folder
+- The workspace has no `controls/` folder
+
+If the user hasn't specified a folder, use `controls/` without asking. If you need to ask:
+> "Where should I create this control? Default is `controls/` — press Enter to accept, or specify a different folder path."
+
 ### After Discovery — Map to Technical Parameters
 
 | Parameter | Description | Default |
@@ -95,6 +104,7 @@ Read the user's request carefully. Determine what you KNOW vs what's UNCLEAR.
 | `namespace` | Namespace for the control | `PCFControls` |
 | `controlType` | `field`, `dataset`, or `react` | `field` |
 | `boundPropertyType` | For field controls: the data type to bind to | `SingleLine.Text` |
+| `targetFolder` | Parent folder for the control | `controls` |
 | `description` | Short description of the control | `A custom PCF control` |
 
 > **Note:** Infer technical params from context. If user says "rating 1-5 stars", you know it's `Whole.None`. Don't ask the user for namespace or property type directly.
@@ -105,13 +115,15 @@ Read the user's request carefully. Determine what you KNOW vs what's UNCLEAR.
 
 ### Step 1: Create Project Directory
 
-**IMPORTANT:** Create the directory FIRST, then cd into it, then run `pac pcf init`. Do NOT run pac pcf init from the `controls/` folder directly.
+**IMPORTANT:** Create the directory FIRST, then cd into it, then run `pac pcf init`. Do NOT run pac pcf init from the parent folder directly.
 
 ```bash
-cd "<repo-root>/controls"
+cd "<repo-root>/<targetFolder>"
 mkdir <controlName>
 cd <controlName>
 ```
+
+> Use `controls` as `<targetFolder>` unless the user specified a different folder in Phase 2.
 
 ### Step 2: Initialize PCF Project
 

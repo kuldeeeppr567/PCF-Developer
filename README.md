@@ -86,13 +86,9 @@ cd pcf-developer-agent
 code .
 ```
 
-### Step 3: Install Shared Dependencies
+### Step 3: You're Ready!
 
-```bash
-npm install
-```
-
-This installs the shared PCF build tooling once. All controls you create will reuse these dependencies — no reinstall needed per control.
+No root `npm install` is needed. Each PCF control installs its own dependencies when created by the agent.
 
 ### Step 4: Accept Recommended Extensions
 
@@ -125,6 +121,7 @@ That's it. You're ready to build PCF controls with natural language.
 | **create-pcf** | "create", "scaffold", "new PCF control" |
 | **create-pcf-from-image** | "screenshot", "image", "looks like this", "mockup" |
 | **edit-pcf** | "edit", "add property", "change style", "update" |
+| **delete-pcf** | "delete", "remove", "clean up", "delete control" |
 | **deploy-pcf** | "deploy", "push", "build solution", "package" |
 
 ### Tools the Agent Can Use
@@ -162,11 +159,15 @@ Bind to SingleLine.Text and store hex color values.
 ```
 
 The agent will:
-1. Create the project folder in `controls/`
-2. Run `pac pcf init`
-3. Link dependencies via workspace (`npm install` from root — fast!)
-4. Generate the manifest, TypeScript, and CSS
-5. Build and verify
+1. Check prerequisites (node, npm, pac)
+2. Ask clarifying questions if needed (optionally: which folder)
+3. Create the project folder (default: `controls/`)
+4. Run `pac pcf init` and `npm install`
+5. Generate the manifest, TypeScript, and CSS
+6. Build and verify
+7. Show a summary + CRM setup guide
+8. Offer to preview in the test harness
+9. Offer to deploy to your environment
 
 ---
 
@@ -255,17 +256,38 @@ npm run build → pac solution init → dotnet build → pac solution import (pr
 
 ---
 
+## 8.5. Usage — Deleting Controls
+
+### Delete by Name
+```
+Delete the Slider control.
+```
+
+### Browse and Delete
+```
+Delete a PCF control.
+```
+
+The agent will:
+1. List all existing controls in the workspace
+2. Show them as options for you to pick
+3. Confirm before deleting (shows what will be removed)
+4. Remove the entire control folder
+
+---
+
 ## 9. Where Controls Are Created
 
-Controls are generated inside the `controls/` folder using **npm workspaces**:
+By default, controls are generated inside the `controls/` folder. Each control is **fully self-contained** — it has its own `node_modules/`, `package.json`, and builds independently.
+
+You can specify a different folder when creating a control, but `controls/` is the default.
 
 ```
-pcf-developer-agent/              ← workspace root
+pcf-developer-agent/              ← repository root
 ├── .github/                      ← agent tooling (committed)
 ├── docs/                         ← documentation (committed)
 ├── templates/                    ← reference templates (committed)
-├── package.json                  ← root workspace config
-├── node_modules/                 ← SHARED dependencies (one copy!)
+├── package.json                  ← repo metadata only
 ├── controls/
 │   ├── RatingStars/              ← YOUR generated control
 │   │   ├── RatingStars/
@@ -273,30 +295,33 @@ pcf-developer-agent/              ← workspace root
 │   │   │   ├── index.ts
 │   │   │   ├── css/RatingStars.css
 │   │   │   └── generated/
-│   │   ├── package.json          ← workspace member
+│   │   ├── node_modules/         ← control's own dependencies
+│   │   ├── package.json
 │   │   └── tsconfig.json
 │   └── ColorPicker/              ← another generated control
 └── solutions/                    ← solution packages (for deployment)
 ```
 
-### Why npm Workspaces?
+### Standalone Per-Control Architecture
 
-| Without Workspaces | With Workspaces |
-|---|---|
-| `npm install` per control (~60s each) | `npm install` once at root (~60s total) |
-| 550 packages duplicated per control | 550 packages shared across all controls |
-| ~200MB disk per control | ~200MB total for all controls |
+Each control is independent:
+- `npm install` runs inside the control folder (e.g., `controls/Slider/`)
+- No shared dependencies between controls
+- Delete a control folder without affecting others
+- Each control can have different dependency versions if needed
 
-### First-Time Setup
-
-```bash
-npm install    # Run ONCE from repo root
-```
-
-### After Creating a New Control
+### Working with Controls
 
 ```bash
-npm install    # Run from repo root — links new workspace in ~2 seconds
+# Build a control
+cd controls/YourControl
+npm run build
+
+# Preview in test harness
+npm start watch
+
+# Delete a control (or use the agent: "delete the Slider control")
+Remove-Item controls/YourControl -Recurse -Force
 ```
 
 > **Note:** Build outputs (`out/`) and `generated/` folders are git-ignored. Commit your control source code if you want to version it.
