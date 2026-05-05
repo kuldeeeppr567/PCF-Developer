@@ -65,13 +65,23 @@ For rapid development testing:
 ```bash
 # Ensure authenticated
 pac auth list
+```
 
-# If not authenticated, create auth profile
+**If not authenticated**, create an auth profile. This will open a login window:
+```bash
 pac auth create --url https://yourorg.crm.dynamics.com
+```
 
-# Push the control
+> **Login flow:** The `pac auth create` command opens a Microsoft login page. It first attempts to open inside VS Code (embedded browser). If that's not available, it opens in your default web browser. Sign in with your Power Platform credentials. Once authenticated, the terminal will confirm success.
+
+**After authentication, push the control:**
+```bash
+cd controls/<ControlName>
 pac pcf push --publisher-prefix <prefix>
 ```
+
+**After successful push**, inform the user:
+> "✅ Control deployed successfully to your environment! You can now add it to a form in your model-driven app."
 
 **Parameters to confirm with user:**
 - `--publisher-prefix` — The publisher prefix (e.g., `contoso`, `custom`)

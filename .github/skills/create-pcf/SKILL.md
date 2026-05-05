@@ -6,47 +6,88 @@ description: Scaffold a new PCF (Power Apps Component Framework) control project
 # Create PCF Control Skill
 
 ## Purpose
-Scaffold a complete, working PCF control project from scratch. This skill handles the full initialization including `pac pcf init`, manifest configuration, index.ts boilerplate with lifecycle methods, CSS file setup, and dependency installation.
+Scaffold a complete, working PCF control project from scratch. This skill handles the full lifecycle from understanding requirements through to preview and deployment.
 
 ## When to Use
 - User says "create a new PCF control", "scaffold a PCF", "init a PCF project"
 - User names a control and wants it built from scratch
 - User specifies a control type (field, dataset, React)
 
-## Discovery Phase — Ask Before You Build
+---
 
-Before jumping into scaffolding, assess how much information you already have from the user's prompt. Your goal is to understand WHAT the user wants to build, not just the technical parameters.
+## ⚠️ MANDATORY EXECUTION SEQUENCE
+
+**Follow these phases IN ORDER. Do NOT skip or rearrange phases.**
+
+```
+Phase 1: CHECK PREREQUISITES     → Verify tools exist
+Phase 2: UNDERSTAND REQUIREMENTS  → Read prompt, ask questions if needed
+Phase 3: BUILD THE CONTROL        → Scaffold, install, write code, compile
+Phase 4: SHOW CONTROL INFO        → Display what was built + CRM setup guide
+Phase 5: OFFER PREVIEW            → Ask user if they want to see it running
+Phase 6: OFFER DEPLOYMENT         → Ask user if they want to deploy to CRM
+```
+
+**CRITICAL RULES:**
+- Do NOT start Phase 3 until Phase 2 is complete (all questions answered)
+- Do NOT skip Phase 4 — ALWAYS show the control info after build succeeds
+- Do NOT skip Phase 5 — ALWAYS ask about preview after showing info
+- Do NOT skip Phase 6 — ALWAYS ask about deployment after preview is done/declined
+- Do NOT run `npm install` more than ONCE
+- Do NOT use `context.accessibility.assignedTabIndex` — it does not exist in PCF typings. Use `tabIndex = 0` instead.
+
+---
+
+## Phase 1: Check Prerequisites
+
+Verify the developer environment has the required tools:
+
+```bash
+node --version
+npm --version
+pac --version
+```
+
+**All three must succeed.** If any fails:
+- `node`/`npm` not found → Tell user to install Node.js from https://nodejs.org
+- `pac` not found → Run: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`
+
+Only proceed to Phase 2 after ALL prerequisites pass.
+
+---
+
+## Phase 2: Understand Requirements (Discovery)
+
+### Assess the user's prompt
+
+Read the user's request carefully. Determine what you KNOW vs what's UNCLEAR.
 
 ### When to Ask Questions
 - **Skip questions** if the user's prompt is very specific (e.g., "Create a toggle switch that binds to a Yes/No field with a blue theme")
 - **Ask 1-2 questions** for moderately clear requests (e.g., "Create a rating control")
-- **Ask 2-4 questions** for vague or complex requests (e.g., "Create a control for managing tags" or "I need something for file uploads")
+- **Ask 2-4 questions** for vague or complex requests (e.g., "Create a control for managing tags")
 
 ### How to Ask
 - Ask **one question at a time** — wait for the answer before asking the next
-- Provide **hints or examples** in each question so the user isn't starting from a blank slate
+- Provide **hints or examples** in each question
 - Keep questions conversational, not like a form
 - Stop asking as soon as you have enough to build confidently
 
 ### What to Discover
 
-Adapt which questions you ask based on what's missing from the user's prompt:
-
 1. **Purpose & Usage** (ask if the user only gave a name, no context):
    > "How will this control be used? For example: replacing a text field on a form, displaying data in a custom way, capturing user input like signatures/ratings/selections, etc."
 
 2. **Visual Behavior** (ask if the UI isn't obvious from the description):
-   > "What should it look like or behave like? For example: a slider with min/max labels, a star rating with hover effects, a tag input with autocomplete, a card layout for records, etc."
+   > "What should it look like or behave like? For example: a slider with min/max labels, a star rating with hover effects, a tag input with autocomplete, etc."
 
 3. **Data Binding** (ask if unclear what data type it should bind to):
-   > "What kind of data will this control work with? For example: a single text value, a number (integer/decimal/currency), a yes/no toggle, a date, an option set, or a full dataset/grid of records?"
+   > "What kind of data will this control work with? For example: a single text value, a number (integer/decimal/currency), a yes/no toggle, a date, an option set, or a dataset/grid of records?"
 
 4. **Special Requirements** (ask only for complex controls):
-   > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, must be accessible with screen readers, needs to call an external API, etc."
+   > "Any specific requirements? For example: must work offline, needs WebAPI access, should support dark mode, needs to call an external API, etc."
 
 ### After Discovery — Map to Technical Parameters
-
-Once you have enough context, determine these values (use defaults where the user didn't specify):
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -55,65 +96,51 @@ Once you have enough context, determine these values (use defaults where the use
 | `controlType` | `field`, `dataset`, or `react` | `field` |
 | `boundPropertyType` | For field controls: the data type to bind to | `SingleLine.Text` |
 | `description` | Short description of the control | `A custom PCF control` |
-| `publisherPrefix` | Publisher prefix for deployment | `custom` |
 
-> **Note:** Do NOT ask the user for `namespace`, `publisherPrefix`, or `boundPropertyType` directly unless they're advanced users. Infer these from context. For example, if they say "a control for rating 1-5 stars", you know it's `Whole.None` bound to a number field.
+> **Note:** Infer technical params from context. If user says "rating 1-5 stars", you know it's `Whole.None`. Don't ask the user for namespace or property type directly.
 
-## Execution Steps
+---
 
-### Step 0: Verify Prerequisites
+## Phase 3: Build the Control
 
-Verify `pac` CLI is available:
-```bash
-pac --version
-```
-If `pac` is not found, install it: `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`
+### Step 1: Create Project Directory
 
-### Step 1: Create Project Directory Inside `controls/`
-
-All controls go in the `controls/` folder. Each control is fully self-contained with its own `node_modules/`.
+**IMPORTANT:** Create the directory FIRST, then cd into it, then run `pac pcf init`. Do NOT run pac pcf init from the `controls/` folder directly.
 
 ```bash
-cd controls
+cd "<repo-root>/controls"
 mkdir <controlName>
 cd <controlName>
 ```
 
 ### Step 2: Initialize PCF Project
 
-**For field controls:**
 ```bash
+# Field control:
 pac pcf init --namespace <namespace> --name <controlName> --template field
-```
 
-**For dataset controls:**
-```bash
+# Dataset control:
 pac pcf init --namespace <namespace> --name <controlName> --template dataset
-```
 
-**For React-based controls:**
-```bash
+# React control:
 pac pcf init --namespace <namespace> --name <controlName> --template field --framework react
 ```
 
 ### Step 3: Install Dependencies
 
-Run `npm install` **inside the control folder**. Each control manages its own dependencies independently:
+Run **inside** the control folder (e.g., `controls/Slider/`):
 
 ```bash
 npm install
 ```
 
-This installs `pcf-scripts`, `pcf-start`, TypeScript, and other PCF tooling into the control's own `node_modules/`. Takes ~30-45 seconds for the first control, faster on subsequent ones due to npm cache.
+> **Run ONLY ONCE.** If the build fails later, the issue is code/manifest, NOT dependencies.
 
-> **Important:** Run `npm install` from INSIDE the control folder (e.g., `controls/Slider/`), NOT from the repo root.
-> **Important:** Run `npm install` ONLY ONCE per control creation. If the build fails after install, the issue is NOT dependencies — check manifest XML syntax or TypeScript errors instead.
+### Step 4: Write the Manifest
 
-### Step 4: Configure the Manifest
+Replace the generated `ControlManifest.Input.xml`. Use clean XML — do NOT leave stray comment tags (`-->`) from the template.
 
-Replace the generated `ControlManifest.Input.xml` with a properly configured manifest based on the control type.
-
-**Field Control Manifest Template:**
+**Field Control:**
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
@@ -130,7 +157,7 @@ Replace the generated `ControlManifest.Input.xml` with a properly configured man
 </manifest>
 ```
 
-**Dataset Control Manifest Template:**
+**Dataset Control:**
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
@@ -147,7 +174,7 @@ Replace the generated `ControlManifest.Input.xml` with a properly configured man
 </manifest>
 ```
 
-**React Virtual Control Manifest Template:**
+**React Virtual Control:**
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
@@ -165,322 +192,115 @@ Replace the generated `ControlManifest.Input.xml` with a properly configured man
 </manifest>
 ```
 
-### Step 5: Generate index.ts
+### Step 5: Write index.ts
 
-**Standard Field Control:**
-```typescript
-import { IInputs, IOutputs } from "./generated/ManifestTypes";
+Implement the full control logic. Use ONLY APIs that exist in PCF typings:
 
-export class {{controlName}} implements ComponentFramework.StandardControl<IInputs, IOutputs> {
-    private _container: HTMLDivElement;
-    private _context: ComponentFramework.Context<IInputs>;
-    private _notifyOutputChanged: () => void;
-    private _value: string | null;
+**SAFE to use:**
+- `context.parameters.<name>.raw`
+- `context.mode.isControlDisabled`
+- `context.mode.isVisible`
+- `context.updatedProperties`
+- `context.formatting`
+- `context.webAPI` (if declared in manifest)
+- `context.navigation`
+- `context.device` (if declared in manifest)
 
-    public init(
-        context: ComponentFramework.Context<IInputs>,
-        notifyOutputChanged: () => void,
-        state: ComponentFramework.Dictionary,
-        container: HTMLDivElement
-    ): void {
-        this._context = context;
-        this._container = container;
-        this._notifyOutputChanged = notifyOutputChanged;
+**DO NOT use (they don't exist or cause build errors):**
+- ~~`context.accessibility.assignedTabIndex`~~ — Use `tabIndex = 0` directly
+- ~~`context.theming`~~ — Use `context.fluentDesignLanguage` if available
 
-        // Create control DOM
-        this._container.classList.add("{{controlName | lowercase}}-container");
-        this._renderControl();
-    }
+### Step 6: Write CSS
 
-    public updateView(context: ComponentFramework.Context<IInputs>): void {
-        this._context = context;
+Create `css/{{controlName}}.css` with scoped styles.
 
-        if (context.updatedProperties.includes("value")) {
-            this._value = context.parameters.value.raw;
-            this._renderControl();
-        }
-    }
+### Step 7: Build
 
-    public getOutputs(): IOutputs {
-        return {
-            value: this._value ?? undefined
-        };
-    }
-
-    public destroy(): void {
-        // Cleanup event listeners
-    }
-
-    private _renderControl(): void {
-        this._value = this._context.parameters.value.raw;
-        // TODO: Implement control rendering
-        this._container.textContent = this._value ?? "";
-    }
-}
-```
-
-**Standard Dataset Control:**
-```typescript
-import { IInputs, IOutputs } from "./generated/ManifestTypes";
-
-export class {{controlName}} implements ComponentFramework.StandardControl<IInputs, IOutputs> {
-    private _container: HTMLDivElement;
-    private _context: ComponentFramework.Context<IInputs>;
-    private _notifyOutputChanged: () => void;
-
-    public init(
-        context: ComponentFramework.Context<IInputs>,
-        notifyOutputChanged: () => void,
-        state: ComponentFramework.Dictionary,
-        container: HTMLDivElement
-    ): void {
-        this._context = context;
-        this._container = container;
-        this._notifyOutputChanged = notifyOutputChanged;
-
-        this._container.classList.add("{{controlName | lowercase}}-container");
-        this._renderGrid();
-    }
-
-    public updateView(context: ComponentFramework.Context<IInputs>): void {
-        this._context = context;
-
-        if (context.updatedProperties.includes("dataset")) {
-            this._renderGrid();
-        }
-    }
-
-    public getOutputs(): IOutputs {
-        return {};
-    }
-
-    public destroy(): void {
-        // Cleanup
-    }
-
-    private _renderGrid(): void {
-        const dataset = this._context.parameters.dataSet;
-
-        if (!dataset.loading) {
-            this._container.innerHTML = "";
-
-            const table = document.createElement("table");
-            table.classList.add("{{controlName | lowercase}}-table");
-            table.setAttribute("role", "grid");
-
-            // Header row
-            const thead = document.createElement("thead");
-            const headerRow = document.createElement("tr");
-            dataset.columns.forEach(col => {
-                const th = document.createElement("th");
-                th.textContent = col.displayName;
-                th.setAttribute("scope", "col");
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            // Data rows
-            const tbody = document.createElement("tbody");
-            dataset.sortedRecordIds.forEach(recordId => {
-                const record = dataset.records[recordId];
-                const row = document.createElement("tr");
-                dataset.columns.forEach(col => {
-                    const td = document.createElement("td");
-                    td.textContent = record.getFormattedValue(col.name);
-                    row.appendChild(td);
-                });
-                tbody.appendChild(row);
-            });
-            table.appendChild(tbody);
-
-            this._container.appendChild(table);
-        }
-    }
-}
-```
-
-**React Virtual Control:**
-```typescript
-import * as React from "react";
-import { IInputs, IOutputs } from "./generated/ManifestTypes";
-import { {{controlName}}App } from "./components/App";
-
-export class {{controlName}} implements ComponentFramework.ReactControl<IInputs, IOutputs> {
-    private _notifyOutputChanged: () => void;
-    private _currentValue: string | null;
-
-    public init(
-        context: ComponentFramework.Context<IInputs>,
-        notifyOutputChanged: () => void,
-        state: ComponentFramework.Dictionary
-    ): void {
-        this._notifyOutputChanged = notifyOutputChanged;
-    }
-
-    public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
-        return React.createElement({{controlName}}App, {
-            value: context.parameters.value.raw,
-            isDisabled: context.mode.isControlDisabled,
-            onChange: this._handleChange.bind(this)
-        });
-    }
-
-    public getOutputs(): IOutputs {
-        return {
-            value: this._currentValue ?? undefined
-        };
-    }
-
-    public destroy(): void {}
-
-    private _handleChange(newValue: string | null): void {
-        this._currentValue = newValue;
-        this._notifyOutputChanged();
-    }
-}
-```
-
-### Step 6: Generate React Component (React controls only)
-
-Create `components/App.tsx`:
-```tsx
-import * as React from "react";
-
-export interface I{{controlName}}AppProps {
-    value: string | null;
-    isDisabled: boolean;
-    onChange: (newValue: string | null) => void;
-}
-
-export const {{controlName}}App: React.FC<I{{controlName}}AppProps> = React.memo(({ value, isDisabled, onChange }) => {
-    const handleChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(event.target.value || null);
-    }, [onChange]);
-
-    return (
-        <div className="{{controlName | lowercase}}-app">
-            {/* TODO: Implement control UI */}
-            <input
-                type="text"
-                value={value ?? ""}
-                onChange={handleChange}
-                disabled={isDisabled}
-                aria-label="{{controlName}}"
-            />
-        </div>
-    );
-});
-
-{{controlName}}App.displayName = "{{controlName}}App";
-```
-
-### Step 7: Generate CSS
-
-Create `css/{{controlName}}.css`:
-```css
-.{{controlName | lowercase}}-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-/* Add control-specific styles below */
-```
-
-### Step 8: Verify Build
-
-Build from within the control folder:
 ```bash
-cd controls/<controlName>
 npm run build
 ```
 
-## Output Confirmation
+If the build fails, fix the TypeScript/manifest error and rebuild. Do NOT run `npm install` again.
 
-After scaffolding, confirm with the user:
-- ✅ Project initialized at `controls/<controlName>/`
-- ✅ Manifest configured with correct properties
-- ✅ index.ts has full lifecycle implementation
-- ✅ CSS file created with scoped styles
-- ✅ Dependencies installed (`node_modules/` in control folder)
-- ✅ Build succeeds
+---
 
-## Post-Creation Workflow
+## Phase 4: Show Control Information (MANDATORY)
 
-After a successful build, follow this exact sequence:
+**IMMEDIATELY after a successful build**, display this information to the user. Do NOT skip this phase.
 
-### Step 9: Show Control Information Document
+Show a structured summary:
 
-Display a markdown summary to the user with:
+```
+## ✅ <controlName> — PCF Control Created Successfully
 
-```markdown
-# <controlName> — PCF Control Summary
+### What This Control Does
+<One paragraph explaining the control's purpose, behavior, and how it looks>
 
-## What This Control Does
-<One-paragraph description of the control's purpose and behavior>
-
-## Control Type
+### Control Details
 | Property | Value |
 |----------|-------|
+| Location | `controls/<controlName>/` |
 | Type | Field / Dataset / React Virtual |
 | Namespace | <namespace> |
-| Bound Property | <boundPropertyType> (or Dataset) |
-| Framework | Standard DOM / React + Fluent UI |
+| Bound To | <boundPropertyType description> |
 
-## How to Configure in Power Apps
+### How to Add to a Model-Driven App (Dynamics 365 / Power Apps)
 
-### Option A: Deploy via VS Code (Recommended)
-1. Open this workspace in VS Code
-2. Select the **PCF Developer** agent in Copilot Chat
-3. Say: *"Deploy <controlName> to my environment"*
-4. Provide your environment URL and publisher prefix when asked
+1. **Deploy** the control to your environment (I'll help with this next)
+2. Open **make.powerapps.com** → navigate to your **Solution**
+3. Open the **Table** → **Forms** → select your form
+4. Click the **field** you want to replace → **Properties** → **Controls** tab
+5. Click **"Add control"** → search for `<controlName>`
+6. Select it, choose which clients (Web / Phone / Tablet)
+7. Map the control's properties to form fields
+8. **Save and Publish** the form
 
-### Option B: Manual Import
-1. **Build the solution package:**
-   ```bash
-   cd solutions
-   mkdir <controlName>Solution
-   cd <controlName>Solution
-   pac solution init --publisher-name <PublisherName> --publisher-prefix <prefix>
-   pac solution add-reference --path ../../controls/<controlName>
-   dotnet build
-   ```
-2. **Find the solution zip:** `solutions/<controlName>Solution/bin/Debug/<controlName>Solution.zip`
-3. **Import into Power Platform:**
-   - Go to [make.powerapps.com](https://make.powerapps.com)
-   - Navigate to **Solutions** → **Import solution**
-   - Upload the `.zip` file and click **Import**
-4. **Add to a form or page:**
-   - Open the form editor for your table
-   - Select the field → **Change control** → Choose `<controlName>`
-   - Save and publish the form
+### Key Features
+- <feature 1>
+- <feature 2>
+- <feature 3>
 ```
 
-### Step 10: Ask About Preview
+---
 
-After showing the information document, ask the user:
+## Phase 5: Offer Preview (MANDATORY)
 
-> **Would you like to preview the control in the test harness?**
+After showing the control info, ask:
 
-- If **yes** → Run `npm start watch` inside `controls/<controlName>/` and inform the user the browser will open at `http://localhost:8181`
-- If **no** → Proceed to Step 11
+> **Would you like to preview the control in the test harness?** I'll run `npm start watch` and it will open at http://localhost:8181 in your browser.
 
-### Step 11: Ask About Deployment
+- If user says **yes/ok/run/sure** → Run:
+  ```bash
+  cd controls/<controlName>
+  npm start watch
+  ```
+  Then tell the user: *"The preview server is running. Open http://localhost:8181 in your browser. You can interact with the control and set property values in the harness. Come back here when you're done."*
 
-If the user declined preview (or after preview is done), ask:
+- If user says **no/skip** → Proceed to Phase 6.
 
-> **Would you like to deploy this control to a Power Platform environment?**
+- If user comes back after preview (says anything after the browser was opened) → Proceed to Phase 6.
 
-- If **yes** → Ask for:
-  - **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
-  - **Publisher prefix** (e.g., `contoso`) — use the one from scaffolding if already provided
-  Then invoke the `deploy-pcf` skill to handle authentication and deployment.
-- If **no** → End the workflow. Inform the user they can deploy later by saying *"Deploy <controlName>"* in chat.
+---
+
+## Phase 6: Offer Deployment (MANDATORY)
+
+After preview is done or declined, ask:
+
+> **Would you like to deploy this control to your Power Platform environment?**
+
+- If user says **yes** → Ask for:
+  1. **Environment URL** (e.g., `https://yourorg.crm.dynamics.com`)
+  2. **Publisher prefix** (e.g., `contoso`)
+  
+  Then invoke the `deploy-pcf` skill to handle:
+  - Authentication (`pac auth create --url <env-url>`)
+  - Quick push (`pac pcf push --publisher-prefix <prefix>`) — this opens login in the terminal/VS Code
+  - Confirm success
+
+- If user says **no/later** → End with:
+  > "You can deploy anytime later by saying *'Deploy <controlName>'* in this chat."
+
+---
 
 ## Common Property Type Mappings
 
