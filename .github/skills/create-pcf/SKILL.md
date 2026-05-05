@@ -35,6 +35,7 @@ Phase 6: OFFER DEPLOYMENT         → Ask user if they want to deploy to CRM
 - Do NOT skip Phase 6 — ALWAYS ask about deployment after preview is done/declined
 - Do NOT run `npm install` more than ONCE
 - Do NOT use `context.accessibility.assignedTabIndex` — it does not exist in PCF typings. Use `tabIndex = 0` instead.
+- **ALWAYS use `vscode_askQuestions` tool for Phase 5 and Phase 6 — NEVER write yes/no questions as plain chat text. The user MUST see clickable option buttons.**
 
 ---
 
@@ -291,16 +292,26 @@ Show a structured summary:
 
 ## Phase 5: Offer Preview (MANDATORY)
 
-After showing the control info, ask the user if they want to preview using `vscode_askQuestions`:
+**⚠️ CRITICAL: You MUST use the `vscode_askQuestions` tool here. Do NOT just type a question in chat text. The user must see clickable buttons.**
 
-**Use `vscode_askQuestions` with these options:**
+After showing the control info, call `vscode_askQuestions` with exactly this structure:
+
+```json
+{
+  "questions": [{
+    "header": "Preview",
+    "question": "Would you like to preview the control in the test harness?",
+    "message": "I'll run `npm start watch` — opens at http://localhost:8181 in your browser.",
+    "options": [
+      { "label": "Yes, start preview", "recommended": true },
+      { "label": "No, skip preview" }
+    ]
+  }]
+}
 ```
-Question: "Would you like to preview the control in the test harness?"
-Message: "I'll run `npm start watch` in `controls/<controlName>/` — this opens the control at http://localhost:8181 in your browser."
-Options:
-  - "Yes, start preview" (recommended)
-  - "No, skip preview"
-```
+
+**DO NOT combine preview and deploy into one question. They are SEPARATE phases.**
+**DO NOT write the question as chat text. ALWAYS use `vscode_askQuestions` tool.**
 
 ### If user selects "Yes, start preview":
 
@@ -340,15 +351,24 @@ Options:
 
 ## Phase 6: Offer Deployment (MANDATORY)
 
-After preview is done or declined, ask using `vscode_askQuestions`:
+**⚠️ CRITICAL: You MUST use the `vscode_askQuestions` tool here. Do NOT just type a question in chat text. The user must see clickable buttons.**
 
-**Use `vscode_askQuestions` with these options:**
+After preview is done or declined, call `vscode_askQuestions` with exactly this structure:
+
+```json
+{
+  "questions": [{
+    "header": "Deploy",
+    "question": "Would you like to deploy this control to your Power Platform environment?",
+    "options": [
+      { "label": "Yes, deploy now", "recommended": true },
+      { "label": "No, maybe later" }
+    ]
+  }]
+}
 ```
-Question: "Would you like to deploy this control to your Power Platform environment?"
-Options:
-  - "Yes, deploy now"
-  - "No, maybe later"
-```
+
+**DO NOT write the question as chat text. ALWAYS use `vscode_askQuestions` tool.**
 
 ### If user selects "Yes, deploy now":
 
