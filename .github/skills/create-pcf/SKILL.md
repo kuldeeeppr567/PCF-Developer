@@ -249,6 +249,10 @@ npm run build
 
 If the build fails, fix the TypeScript/manifest error and rebuild. Do NOT run `npm install` again.
 
+### Timing
+
+**Record the time** when Phase 3 starts (before creating the directory) and when the build succeeds. Calculate the total duration. You will display this in Phase 4.
+
 ---
 
 ## Phase 4: Show Control Information (MANDATORY)
@@ -258,7 +262,7 @@ If the build fails, fix the TypeScript/manifest error and rebuild. Do NOT run `n
 Show a structured summary:
 
 ```
-## ✅ <controlName> — PCF Control Created Successfully
+## ✅ <controlName> — PCF Control Created Successfully (⏱️ <duration> seconds)
 
 ### What This Control Does
 <One paragraph explaining the control's purpose, behavior, and how it looks>
