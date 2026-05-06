@@ -147,7 +147,7 @@ export class ControlName implements ComponentFramework.ReactControl<IInputs, IOu
 - Always include `aria-label`, `aria-describedby` on interactive elements
 - Support keyboard navigation (Tab, Enter, Escape, Arrow keys)
 - Use semantic HTML (`<button>`, `<input>`, not `<div onclick>`)
-- Respect `context.accessibility.assignedTabIndex`
+- Use `tabIndex = 0` for focusable elements (do NOT use `context.accessibility.assignedTabIndex` — it does not exist)
 - Test with screen readers
 
 ### Styling
