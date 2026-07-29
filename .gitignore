@@ -9,6 +9,10 @@ bin/
 dist/
 *.js.map
 
+# Generator build output
+tools/generator/dist/
+tools/generator/node_modules/
+
 # PCF generated files
 **/generated/
 

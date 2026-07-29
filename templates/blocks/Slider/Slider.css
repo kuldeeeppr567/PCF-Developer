@@ -1,0 +1,50 @@
+.pcf-block-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-slider__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-slider__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pcf-block-slider__input {
+    flex: 1;
+    height: 4px;
+    appearance: none;
+    border-radius: 2px;
+    background: linear-gradient(to right, #0078d4 var(--slider-fill, 0%), #d2d0ce var(--slider-fill, 0%));
+    outline: none;
+    cursor: pointer;
+}
+.pcf-block-slider__input::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #0078d4;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px #0078d4;
+}
+.pcf-block-slider__input:disabled {
+    background: #d2d0ce;
+    cursor: not-allowed;
+}
+.pcf-block-slider__input:disabled::-webkit-slider-thumb {
+    background-color: #a19f9d;
+    box-shadow: 0 0 0 1px #a19f9d;
+}
+.pcf-block-slider__value {
+    min-width: 32px;
+    text-align: end;
+    font-size: 14px;
+    color: #323130;
+}

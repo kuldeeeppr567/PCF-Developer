@@ -1,0 +1,47 @@
+{
+  "name": "CustomerRating",
+  "namespace": "Contoso.Controls",
+  "version": "0.0.1",
+  "description": "A field control that displays a star rating and a descriptive label for a Whole.None field.",
+  "controlType": "field",
+  "targetTable": "account",
+  "field": {
+    "propertyName": "value",
+    "ofType": "Whole.None",
+    "required": true
+  },
+  "layout": {
+    "direction": "vertical",
+    "gap": "8px",
+    "padding": "4px"
+  },
+  "blocks": [
+    {
+      "id": "titleLabel",
+      "blockType": "Label",
+      "props": {
+        "text": "Customer Satisfaction",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#323130"
+      }
+    },
+    {
+      "id": "ratingStars",
+      "blockType": "Rating",
+      "props": {
+        "max": 5,
+        "size": "large",
+        "label": "Rate your experience"
+      }
+    },
+    {
+      "id": "submitBtn",
+      "blockType": "Button",
+      "props": {
+        "label": "Save Rating",
+        "variant": "primary"
+      }
+    }
+  ]
+}

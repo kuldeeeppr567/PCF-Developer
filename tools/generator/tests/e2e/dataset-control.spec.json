@@ -1,0 +1,42 @@
+{
+  "name": "ContactsDataset",
+  "namespace": "Contoso.Controls",
+  "version": "0.0.1",
+  "description": "A dataset control that displays contacts in a styled data grid with a header card.",
+  "controlType": "dataset",
+  "targetTable": "contact",
+  "dataset": {
+    "name": "dataSetGrid",
+    "displayName": "Contacts",
+    "columns": [
+      { "name": "fullName", "displayName": "Full Name", "ofType": "SingleLine.Text" },
+      { "name": "email", "displayName": "Email", "ofType": "SingleLine.Email" },
+      { "name": "phone", "displayName": "Phone", "ofType": "SingleLine.Phone" }
+    ]
+  },
+  "layout": {
+    "direction": "vertical",
+    "gap": "12px",
+    "padding": "8px"
+  },
+  "blocks": [
+    {
+      "id": "headerCard",
+      "blockType": "Card",
+      "props": {
+        "title": "Contacts",
+        "subtitle": "All active contacts",
+        "elevated": true,
+        "padding": "12px"
+      }
+    },
+    {
+      "id": "contactGrid",
+      "blockType": "DataGrid",
+      "props": {
+        "emptyText": "No contacts found.",
+        "striped": true
+      }
+    }
+  ]
+}

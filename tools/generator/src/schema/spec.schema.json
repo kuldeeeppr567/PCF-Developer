@@ -1,0 +1,288 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pcf-developer/control.spec.schema.json",
+  "title": "PCF Control Spec",
+  "description": "Declarative spec for composing a PCF control from reusable blocks.",
+  "type": "object",
+  "required": ["name", "namespace", "version", "controlType", "blocks"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+      "description": "PascalCase control name (e.g. MyRatingControl). Used as the PCF constructor and folder name."
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+      "description": "PCF namespace (e.g. MyCompany.Controls)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version string (e.g. 0.0.1)."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description shown in the solution explorer."
+    },
+    "controlType": {
+      "type": "string",
+      "enum": ["field", "dataset"],
+      "description": "Whether this control binds to a single field ('field') or a dataset/view ('dataset'). This choice is explicit and validated up front — it determines the fundamental manifest shape."
+    },
+    "targetTable": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Optional logical name of the Dataverse table this control is intended for (e.g. 'account', 'contact'). Metadata/documentation only — PCF does not bind to a table at manifest level; this does NOT affect generated code."
+    },
+    "field": {
+      "$ref": "#/definitions/fieldConfig",
+      "description": "Required when controlType is 'field'. Defines the bound attribute."
+    },
+    "dataset": {
+      "$ref": "#/definitions/datasetConfig",
+      "description": "Required when controlType is 'dataset'. Defines the dataset and its columns."
+    },
+    "layout": {
+      "$ref": "#/definitions/layoutConfig",
+      "description": "Layout configuration for arranging blocks."
+    },
+    "blocks": {
+      "type": "array",
+      "description": "Ordered list of block instances to compose into this control.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/blockInstance"
+      }
+    }
+  },
+  "if": {
+    "properties": { "controlType": { "const": "field" } }
+  },
+  "then": {
+    "required": ["field"]
+  },
+  "else": {
+    "required": ["dataset"]
+  },
+  "definitions": {
+    "fieldConfig": {
+      "type": "object",
+      "required": ["propertyName", "ofType"],
+      "additionalProperties": false,
+      "properties": {
+        "propertyName": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$",
+          "description": "PCF property name for the bound field (e.g. 'value')."
+        },
+        "ofType": {
+          "type": "string",
+          "enum": [
+            "SingleLine.Text",
+            "SingleLine.Email",
+            "SingleLine.Phone",
+            "SingleLine.URL",
+            "Multiple",
+            "Whole.None",
+            "Currency",
+            "Decimal",
+            "FP",
+            "TwoOptions",
+            "OptionSet",
+            "MultiSelectOptionSet",
+            "DateAndTime.DateOnly",
+            "DateAndTime.DateAndTime",
+            "Lookup.Simple"
+          ],
+          "description": "PCF data type of the bound field."
+        },
+        "required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the bound field is required."
+        }
+      }
+    },
+    "datasetConfig": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$",
+          "description": "PCF dataset name (e.g. 'dataSetGrid')."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Human-readable display name for the dataset."
+        },
+        "columns": {
+          "type": "array",
+          "description": "Optional column definitions for the dataset.",
+          "items": {
+            "$ref": "#/definitions/datasetColumn"
+          }
+        }
+      }
+    },
+    "datasetColumn": {
+      "type": "object",
+      "required": ["name", "ofType"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$",
+          "description": "Column property name."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Human-readable display name for the column."
+        },
+        "ofType": {
+          "type": "string",
+          "enum": [
+            "SingleLine.Text",
+            "SingleLine.Email",
+            "SingleLine.Phone",
+            "SingleLine.URL",
+            "Multiple",
+            "Whole.None",
+            "Currency",
+            "Decimal",
+            "FP",
+            "TwoOptions",
+            "OptionSet",
+            "MultiSelectOptionSet",
+            "DateAndTime.DateOnly",
+            "DateAndTime.DateAndTime",
+            "Lookup.Simple"
+          ],
+          "description": "PCF data type for this column."
+        }
+      }
+    },
+    "layoutConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": ["vertical", "horizontal"],
+          "default": "vertical",
+          "description": "Stack direction for laying out blocks."
+        },
+        "gap": {
+          "type": "string",
+          "default": "8px",
+          "description": "CSS gap between blocks (e.g. '8px', '1rem')."
+        },
+        "padding": {
+          "type": "string",
+          "default": "0",
+          "description": "CSS padding around the control container."
+        }
+      }
+    },
+    "blockInstance": {
+      "type": "object",
+      "required": ["id", "blockType"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+          "description": "Unique instance identifier within this control (e.g. 'titleLabel', 'ratingField')."
+        },
+        "blockType": {
+          "type": "string",
+          "description": "Block type identifier. Use a built-in block name (e.g. 'Label', 'TextInput') or 'custom' for a user-authored component.",
+          "examples": [
+            "Label", "TextInput", "Rating", "Toggle", "Slider",
+            "DatePicker", "Card", "DataGrid", "Button", "NumberInput",
+            "custom"
+          ]
+        },
+        "props": {
+          "type": "object",
+          "description": "Configuration props for the block instance. Allowed props depend on the blockType.",
+          "additionalProperties": true
+        },
+        "custom": {
+          "$ref": "#/definitions/customBlockConfig",
+          "description": "Required when blockType is 'custom'. Points to a user-authored component."
+        }
+      },
+      "if": {
+        "properties": { "blockType": { "const": "custom" } }
+      },
+      "then": {
+        "required": ["custom"]
+      }
+    },
+    "customBlockConfig": {
+      "type": "object",
+      "required": ["componentPath", "componentName"],
+      "additionalProperties": false,
+      "properties": {
+        "componentPath": {
+          "type": "string",
+          "description": "Relative path (from the generated control folder) to the custom component file (e.g. './components/MyCustomComponent.tsx')."
+        },
+        "componentName": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+          "description": "Named export of the React component in that file."
+        },
+        "manifestFragments": {
+          "type": "array",
+          "description": "Optional manifest property fragments this custom block needs.",
+          "items": {
+            "$ref": "#/definitions/manifestProperty"
+          }
+        }
+      }
+    },
+    "manifestProperty": {
+      "type": "object",
+      "required": ["name", "ofType", "usage"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$",
+          "description": "Property name in the manifest."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Human-readable display name key."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description key."
+        },
+        "ofType": {
+          "type": "string",
+          "description": "PCF property type."
+        },
+        "usage": {
+          "type": "string",
+          "enum": ["bound", "input"],
+          "description": "Whether the property is 'bound' (two-way binding to a field) or 'input' (one-way configuration)."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this property is required."
+        },
+        "defaultValue": {
+          "type": "string",
+          "description": "Default value for input properties."
+        }
+      }
+    }
+  }
+}

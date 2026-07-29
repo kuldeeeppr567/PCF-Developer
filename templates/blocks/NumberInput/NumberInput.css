@@ -1,0 +1,50 @@
+.pcf-block-numberinput {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-numberinput__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-numberinput__row {
+    display: flex;
+    align-items: center;
+    border: 1px solid #8a8886;
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 0.1s;
+    background-color: #ffffff;
+}
+.pcf-block-numberinput__row:focus-within { border-color: #0078d4; border-bottom-width: 2px; }
+.pcf-block-numberinput__prefix,
+.pcf-block-numberinput__suffix {
+    padding: 6px 8px;
+    font-size: 14px;
+    color: #605e5c;
+    background-color: #f3f2f1;
+    user-select: none;
+}
+.pcf-block-numberinput__input {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+    color: #323130;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-family: inherit;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.pcf-block-numberinput__input:disabled {
+    background-color: #f3f2f1;
+    color: #a19f9d;
+    cursor: not-allowed;
+}
+/* hide browser spin buttons */
+.pcf-block-numberinput__input::-webkit-outer-spin-button,
+.pcf-block-numberinput__input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.pcf-block-numberinput__input[type=number] { appearance: textfield; }

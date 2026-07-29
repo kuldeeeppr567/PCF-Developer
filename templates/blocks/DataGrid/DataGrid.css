@@ -1,0 +1,39 @@
+.pcf-block-datagrid {
+    width: 100%;
+    overflow-x: auto;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+}
+.pcf-block-datagrid__table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.pcf-block-datagrid__th {
+    padding: 8px 12px;
+    text-align: start;
+    font-weight: 600;
+    color: #323130;
+    border-block-end: 2px solid #0078d4;
+    background-color: #f3f2f1;
+    white-space: nowrap;
+}
+.pcf-block-datagrid__td {
+    padding: 8px 12px;
+    color: #323130;
+    border-block-end: 1px solid #edebe9;
+    vertical-align: top;
+}
+.pcf-block-datagrid__row:hover .pcf-block-datagrid__td { background-color: #f3f2f1; }
+.pcf-block-datagrid__row--striped .pcf-block-datagrid__td { background-color: #faf9f8; }
+.pcf-block-datagrid__row--clickable { cursor: pointer; }
+.pcf-block-datagrid__row--clickable:focus-visible .pcf-block-datagrid__td {
+    outline: 2px solid #0078d4;
+    outline-offset: -2px;
+}
+.pcf-block-datagrid__empty {
+    padding: 24px;
+    text-align: center;
+    color: #a19f9d;
+    font-style: italic;
+}

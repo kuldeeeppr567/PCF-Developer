@@ -1,6 +1,6 @@
 # PCF Developer Agent — Setup & Usage Guide
 
-> **Last updated:** May 4, 2026
+> **Last updated:** July 2026
 
 The PCF Developer Agent is a custom GitHub Copilot Agent Mode for Power Apps Component Framework (PCF) control development. It embeds PCF expertise directly into your VS Code workflow — scaffold, code, style, and deploy controls using natural language, including creating controls from screenshots and design mockups.
 
@@ -8,12 +8,66 @@ This guide provides **step-by-step installation**, **usage examples**, and **tro
 
 > There is nothing you can break. Everything in this guide is local, reversible, and safe.
 
+---
+
+## Two Ways to Build PCF Controls
+
+This repo supports two complementary approaches. **They work together** — not in competition.
+
+### A. Natural Language → Copilot Agent (existing)
+
+Use the **PCF Developer Agent** in VS Code Copilot Chat to generate controls from prompts or screenshots. The agent handles scaffolding, code generation, and deployment in a conversational flow.
+
+```
+"Create a React-based PCF field control called ColorPicker..."
+```
+
+Best for: **one-off controls**, rapid prototyping, image-to-code, exploratory work.
+
+### B. Spec → Generator (new in this version)
+
+Write a declarative `control.spec.json` that assembles **pre-built, reusable blocks** (Label, TextInput, Rating, Toggle, etc.) into a control. The generator merges all block property requirements into one valid manifest and emits a ready-to-build PCF project.
+
+```bash
+node tools/generator/dist/index.js generate my-control.spec.json
+```
+
+Best for: **repeated patterns**, team consistency, round-trippable controls, lower per-control cost.
+
+### How they fit together
+
+```
+Natural language prompt
+        │
+        ▼
+  Copilot Agent ──── produces ────► control.spec.json
+                                           │
+                                           ▼
+                                   pcf-gen generate
+                                           │
+                                           ▼
+                              controls/<Name>/ (buildable PCF project)
+                                           │
+                                           ▼
+                               npm run build  →  pac pcf push
+```
+
+The agent can generate a spec from a description; the generator turns that spec into code. Neither step is mandatory — use whichever entry point fits your workflow.
+
+**New docs:**
+- [Block Library](docs/BLOCKS.md) — all 10 pre-built blocks, their props, how to add new ones
+- [Generator](docs/GENERATOR.md) — spec format, CLI usage, round-tripping, custom block escape hatch
+
+---
+
 ## Quick Links
 
 - [Security Posture](docs/SECURITY.md) — Architecture and security boundaries
 - [Architecture](docs/ARCHITECTURE.md) — How the agent, skills, and tools work together
 - [Prompt Guide](docs/PROMPT-GUIDE.md) — Ready-to-use prompts for all PCF tasks
-- [Contributing](CONTRIBUTING.md) — How to add skills, templates, or improve the agent
+- [Block Library](docs/BLOCKS.md) — Pre-built blocks for the spec+generator flow
+- [Generator](docs/GENERATOR.md) — Spec format and CLI reference
+- [Contributing](CONTRIBUTING.md) — How to add skills, templates, or blocks
 
 ---
 

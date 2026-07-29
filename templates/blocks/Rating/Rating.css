@@ -1,0 +1,27 @@
+.pcf-block-rating {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-rating__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-rating__stars {
+    display: flex;
+    gap: 2px;
+}
+.pcf-block-rating__star {
+    color: #d2d0ce;
+    transition: color 0.1s, transform 0.1s;
+    user-select: none;
+    outline: none;
+}
+.pcf-block-rating__star:focus-visible { outline: 2px solid #0078d4; border-radius: 2px; }
+.pcf-block-rating__star--filled { color: #ffd700; }
+.pcf-block-rating__star--disabled { cursor: not-allowed !important; opacity: 0.6; }
+.pcf-block-rating--small .pcf-block-rating__star { font-size: 18px; }
+.pcf-block-rating--medium .pcf-block-rating__star { font-size: 24px; }
+.pcf-block-rating--large .pcf-block-rating__star { font-size: 32px; }
