@@ -1,0 +1,99 @@
+.palette {
+  width: 200px;
+  flex-shrink: 0;
+  background-color: #faf9f8;
+  border-right: 1px solid #edebe9;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.palette__header {
+  padding: 12px 12px 8px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #323130;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #edebe9;
+  flex-shrink: 0;
+}
+
+.palette__group {
+  padding: 8px 0 4px;
+}
+
+.palette__group-label {
+  padding: 0 12px 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #a19f9d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.palette__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 12px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  color: #323130;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s;
+  box-sizing: border-box;
+}
+
+.palette__item:hover {
+  background-color: #f3f2f1;
+}
+
+.palette__item:focus-visible {
+  outline: 2px solid #0078d4;
+  outline-offset: -2px;
+}
+
+.palette__icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.palette__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette__add {
+  font-size: 18px;
+  font-weight: 300;
+  color: #0078d4;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.palette__item:hover .palette__add {
+  opacity: 1;
+}
+
+.palette__tip {
+  margin-top: auto;
+  padding: 12px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  color: #a19f9d;
+  line-height: 1.4;
+  text-align: center;
+}

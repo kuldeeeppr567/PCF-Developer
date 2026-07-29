@@ -1,0 +1,40 @@
+.pcf-block-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 16px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.1s, border-color 0.1s, color 0.1s;
+    outline: none;
+    text-decoration: none;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+.pcf-block-button--full-width { width: 100%; }
+.pcf-block-button:focus-visible { outline: 2px solid #0078d4; outline-offset: 2px; }
+.pcf-block-button:disabled { cursor: not-allowed; opacity: 0.6; }
+
+/* primary */
+.pcf-block-button--primary { background-color: #0078d4; color: #ffffff; border-color: #0078d4; }
+.pcf-block-button--primary:hover:not(:disabled) { background-color: #106ebe; border-color: #106ebe; }
+.pcf-block-button--primary:active:not(:disabled) { background-color: #005a9e; border-color: #005a9e; }
+
+/* secondary */
+.pcf-block-button--secondary { background-color: #ffffff; color: #0078d4; border-color: #0078d4; }
+.pcf-block-button--secondary:hover:not(:disabled) { background-color: #f3f2f1; }
+
+/* ghost */
+.pcf-block-button--ghost { background-color: transparent; color: #0078d4; border-color: transparent; }
+.pcf-block-button--ghost:hover:not(:disabled) { background-color: #f3f2f1; border-color: #f3f2f1; }
+
+/* danger */
+.pcf-block-button--danger { background-color: #a4262c; color: #ffffff; border-color: #a4262c; }
+.pcf-block-button--danger:hover:not(:disabled) { background-color: #8d1f24; border-color: #8d1f24; }
+
+.pcf-block-button__icon { line-height: 1; }

@@ -13,6 +13,10 @@ dist/
 tools/generator/dist/
 tools/generator/node_modules/
 
+# Designer build output
+tools/designer/dist/
+tools/designer/node_modules/
+
 # PCF generated files
 **/generated/
 

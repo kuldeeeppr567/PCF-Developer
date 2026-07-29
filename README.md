@@ -12,7 +12,7 @@ This guide provides **step-by-step installation**, **usage examples**, and **tro
 
 ## Two Ways to Build PCF Controls
 
-This repo supports two complementary approaches. **They work together** — not in competition.
+This repo supports three complementary approaches. **They work together** — not in competition.
 
 ### A. Natural Language → Copilot Agent (existing)
 
@@ -24,7 +24,7 @@ Use the **PCF Developer Agent** in VS Code Copilot Chat to generate controls fro
 
 Best for: **one-off controls**, rapid prototyping, image-to-code, exploratory work.
 
-### B. Spec → Generator (new in this version)
+### B. Spec → Generator (existing)
 
 Write a declarative `control.spec.json` that assembles **pre-built, reusable blocks** (Label, TextInput, Rating, Toggle, etc.) into a control. The generator merges all block property requirements into one valid manifest and emits a ready-to-build PCF project.
 
@@ -34,29 +34,41 @@ node tools/generator/dist/index.js generate my-control.spec.json
 
 Best for: **repeated patterns**, team consistency, round-trippable controls, lower per-control cost.
 
+### C. Visual Canvas → Designer (new)
+
+Use the **PCF Designer** — a browser-based canvas app — to drag and drop blocks onto a canvas, annotate each element with Dataverse field names and data types, preview the control in real time, and export `control.spec.json` directly. No JSON writing required.
+
+```bash
+cd tools/designer && npm install && npm run dev
+# → opens http://localhost:5173
+```
+
+Best for: **visual thinkers**, teams who prefer drawing over writing JSON, rapid layout exploration.
+
 ### How they fit together
 
 ```
-Natural language prompt
-        │
-        ▼
+Natural language prompt        Visual canvas (PCF Designer)
+        │                               │
+        ▼                               ▼
   Copilot Agent ──── produces ────► control.spec.json
-                                           │
-                                           ▼
-                                   pcf-gen generate
-                                           │
-                                           ▼
-                              controls/<Name>/ (buildable PCF project)
-                                           │
-                                           ▼
+                                            │
+                                            ▼
+                                    pcf-gen generate
+                                            │
+                                            ▼
+                               controls/<Name>/ (buildable PCF project)
+                                            │
+                                            ▼
                                npm run build  →  pac pcf push
 ```
 
-The agent can generate a spec from a description; the generator turns that spec into code. Neither step is mandatory — use whichever entry point fits your workflow.
+The agent can generate a spec from a description; the visual designer lets you draw it; the generator turns that spec into code. Use whichever entry point fits your workflow.
 
 **New docs:**
 - [Block Library](docs/BLOCKS.md) — all 10 pre-built blocks, their props, how to add new ones
 - [Generator](docs/GENERATOR.md) — spec format, CLI usage, round-tripping, custom block escape hatch
+- [PCF Designer](tools/designer/README.md) — visual canvas tool, quick start, interface guide
 
 ---
 
@@ -67,6 +79,7 @@ The agent can generate a spec from a description; the generator turns that spec 
 - [Prompt Guide](docs/PROMPT-GUIDE.md) — Ready-to-use prompts for all PCF tasks
 - [Block Library](docs/BLOCKS.md) — Pre-built blocks for the spec+generator flow
 - [Generator](docs/GENERATOR.md) — Spec format and CLI reference
+- [PCF Designer](tools/designer/README.md) — Visual canvas designer quick start
 - [Contributing](CONTRIBUTING.md) — How to add skills, templates, or blocks
 
 ---

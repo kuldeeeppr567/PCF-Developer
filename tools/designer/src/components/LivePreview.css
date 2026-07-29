@@ -1,0 +1,136 @@
+.live-preview {
+  width: 340px;
+  flex-shrink: 0;
+  background-color: #f3f2f1;
+  border-left: 1px solid #edebe9;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.live-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #edebe9;
+  flex-shrink: 0;
+}
+
+.live-preview__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #323130;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.live-preview__tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.live-preview__tab {
+  padding: 3px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #605e5c;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.live-preview__tab:hover {
+  background-color: #f3f2f1;
+  color: #0078d4;
+}
+
+.live-preview__tab--active {
+  background-color: #eff6fc;
+  color: #0078d4;
+}
+
+.live-preview__tab:focus-visible {
+  outline: 2px solid #0078d4;
+}
+
+/* ── Device frame ── */
+
+.live-preview__stage {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.live-preview__device {
+  width: 100%;
+  max-width: 300px;
+  background-color: #ffffff;
+  border: 1px solid #c8c6c4;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.live-preview__device-bar {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #0078d4;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.live-preview__device-body {
+  padding: 12px;
+  min-height: 80px;
+}
+
+.live-preview__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  color: #a19f9d;
+  font-size: 12px;
+  text-align: center;
+}
+
+.live-preview__unknown-block {
+  padding: 8px;
+  background-color: #fef0cd;
+  border: 1px solid #f7c948;
+  border-radius: 2px;
+  font-size: 12px;
+  color: #323130;
+}
+
+/* ── JSON view ── */
+
+.live-preview__json-stage {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.live-preview__json {
+  margin: 0;
+  padding: 12px;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre;
+}

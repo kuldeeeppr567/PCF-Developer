@@ -1,0 +1,27 @@
+.pcf-block-card {
+    background-color: #ffffff;
+    border: 1px solid #edebe9;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+    width: 100%;
+}
+.pcf-block-card--elevated { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.pcf-block-card__header { margin-block-end: 8px; }
+.pcf-block-card__title {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-card__subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #605e5c;
+}
+.pcf-block-card__body {
+    margin: 0;
+    font-size: 14px;
+    color: #323130;
+    line-height: 1.5;
+}
+.pcf-block-card__content { margin-block-start: 12px; }

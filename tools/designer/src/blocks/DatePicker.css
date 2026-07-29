@@ -1,0 +1,31 @@
+.pcf-block-datepicker {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-datepicker__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-datepicker__input {
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #323130;
+    background-color: #ffffff;
+    border: 1px solid #8a8886;
+    border-radius: 2px;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.1s;
+}
+.pcf-block-datepicker__input:hover:not(:disabled) { border-color: #323130; }
+.pcf-block-datepicker__input:focus { border-color: #0078d4; border-bottom-width: 2px; }
+.pcf-block-datepicker__input:disabled {
+    background-color: #f3f2f1;
+    border-color: #c8c6c4;
+    color: #a19f9d;
+    cursor: not-allowed;
+}

@@ -1,0 +1,264 @@
+.props-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-left: 1px solid #edebe9;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.props-panel__header {
+  padding: 12px 12px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #323130;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #edebe9;
+  flex-shrink: 0;
+}
+
+/* ── Tabs ── */
+
+.props-panel__tabs {
+  display: flex;
+  border-bottom: 1px solid #edebe9;
+  flex-shrink: 0;
+}
+
+.props-panel__tab {
+  flex: 1;
+  padding: 7px 4px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #605e5c;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+  text-align: center;
+}
+
+.props-panel__tab:hover {
+  color: #0078d4;
+}
+
+.props-panel__tab--active {
+  color: #0078d4;
+  border-bottom-color: #0078d4;
+}
+
+.props-panel__tab:focus-visible {
+  outline: 2px solid #0078d4;
+  outline-offset: -2px;
+}
+
+/* ── Body ── */
+
+.props-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.props-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 120px;
+  color: #a19f9d;
+  font-size: 12px;
+  text-align: center;
+}
+
+.props-panel__empty-icon {
+  font-size: 28px;
+  opacity: 0.5;
+}
+
+/* ── Section ── */
+
+.props-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.props-panel__section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #605e5c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.props-panel__block-id {
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 10px;
+  color: #a19f9d;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.props-panel__sub-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a19f9d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+/* ── Field ── */
+
+.props-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.props-panel__field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #605e5c;
+}
+
+.props-panel__input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #323130;
+  background-color: #ffffff;
+  border: 1px solid #8a8886;
+  border-radius: 2px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.1s;
+}
+
+.props-panel__input[type="color"] {
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.props-panel__input:focus {
+  border-color: #0078d4;
+  border-bottom-width: 2px;
+}
+
+.props-panel__select {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #323130;
+  background-color: #ffffff;
+  border: 1px solid #8a8886;
+  border-radius: 2px;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.props-panel__select:focus {
+  border-color: #0078d4;
+}
+
+.props-panel__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #323130;
+}
+
+.props-panel__toggle-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #0078d4;
+}
+
+/* ── Dataset columns ── */
+
+.props-panel__col-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: #f3f2f1;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.props-panel__col-name {
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "Cascadia Code", "Consolas", monospace;
+}
+
+.props-panel__col-type {
+  color: #605e5c;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.props-panel__col-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a19f9d;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.props-panel__col-delete:hover {
+  color: #a4262c;
+}
+
+.props-panel__add-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background-color: #f3f2f1;
+  border-radius: 2px;
+}
+
+.props-panel__add-col-btn {
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0078d4;
+  background-color: #eff6fc;
+  border: 1px solid #c7e0f4;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.props-panel__add-col-btn:hover {
+  background-color: #deecf9;
+}

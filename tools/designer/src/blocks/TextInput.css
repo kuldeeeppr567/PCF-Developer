@@ -1,0 +1,41 @@
+.pcf-block-textinput {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-textinput__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #323130;
+    margin-block-end: 4px;
+}
+.pcf-block-textinput__input,
+.pcf-block-textinput__textarea {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #323130;
+    background-color: #ffffff;
+    border: 1px solid #8a8886;
+    border-radius: 2px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.1s ease;
+    font-family: inherit;
+}
+.pcf-block-textinput__textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+.pcf-block-textinput__input:hover:not(:disabled),
+.pcf-block-textinput__textarea:hover:not(:disabled) { border-color: #323130; }
+.pcf-block-textinput__input:focus,
+.pcf-block-textinput__textarea:focus { border-color: #0078d4; border-bottom-width: 2px; }
+.pcf-block-textinput__input:disabled,
+.pcf-block-textinput__textarea:disabled {
+    background-color: #f3f2f1;
+    border-color: #c8c6c4;
+    color: #a19f9d;
+    cursor: not-allowed;
+}

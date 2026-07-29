@@ -1,0 +1,51 @@
+.pcf-block-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.pcf-block-toggle__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #323130;
+}
+.pcf-block-toggle__control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+.pcf-block-toggle__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+.pcf-block-toggle__track {
+    display: inline-flex;
+    align-items: center;
+    width: 40px;
+    height: 20px;
+    background-color: #8a8886;
+    border-radius: 10px;
+    padding: 2px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    box-sizing: border-box;
+}
+.pcf-block-toggle__track--on { background-color: #0078d4; }
+.pcf-block-toggle__thumb {
+    width: 16px;
+    height: 16px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.15s;
+}
+.pcf-block-toggle__track--on .pcf-block-toggle__thumb { transform: translateX(20px); }
+.pcf-block-toggle__state-text { font-size: 14px; color: #323130; }
+.pcf-block-toggle__input:disabled ~ .pcf-block-toggle__track { opacity: 0.6; cursor: not-allowed; }
+.pcf-block-toggle__input:focus-visible ~ .pcf-block-toggle__track { outline: 2px solid #0078d4; }
